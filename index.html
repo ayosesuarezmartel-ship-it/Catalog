@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Maestro Danfoss - VLT & VACON</title>
+    <style>
+        :root {
+            --red-danfoss: #d71920;
+            --blue-vacon: #00458b;
+            --dark: #2d2d2d;
+            --light-bg: #f0f2f5;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-bg); margin: 0; color: var(--dark); }
+        
+        header { background: white; padding: 30px; text-align: center; border-bottom: 4px solid var(--red-danfoss); }
+        h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+
+        /* Navegación de Pantallas */
+        .nav-tabs { display: flex; background: var(--dark); sticky: top; }
+        .tab { 
+            flex: 1; padding: 20px; text-align: center; color: white; 
+            cursor: pointer; font-weight: bold; transition: 0.3s; border: none; background: none;
+            font-size: 16px;
+        }
+        .tab:hover { background: #444; }
+        .tab.active-vlt { background: var(--red-danfoss); }
+        .tab.active-vacon { background: var(--blue-vacon); }
+
+        /* Buscador */
+        .search-box { padding: 20px; text-align: center; background: white; }
+        #buscador { 
+            width: 90%; max-width: 600px; padding: 12px 20px; 
+            border-radius: 25px; border: 2px solid #ddd; outline: none; font-size: 16px;
+        }
+
+        /* Contenedor de Tarjetas */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+
+        .card { 
+            background: white; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        
+        .card-header { padding: 20px; color: white; font-weight: bold; }
+        .vlt-head { background: var(--red-danfoss); }
+        .vacon-head { background: var(--blue-vacon); }
+
+        .card-body { padding: 20px; flex-grow: 1; }
+        .card-body h3 { margin: 0 0 10px 0; font-size: 18px; }
+        .card-body p { margin: 5px 0; color: #666; font-size: 14px; }
+        
+        .tag { 
+            display: inline-block; padding: 4px 10px; background: #eee; 
+            border-radius: 4px; font-size: 11px; margin-top: 10px; font-weight: bold;
+        }
+
+        .btn-download {
+            margin: 20px; padding: 12px; text-align: center;
+            background: var(--dark); color: white; text-decoration: none;
+            border-radius: 6px; font-weight: bold; transition: 0.3s;
+        }
+        .btn-download:hover { background: #000; }
+
+        /* Responsive */
+        @media (max-width: 600px) { .nav-tabs { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Repositorio Técnico de Convertidores</h1>
+</header>
+
+<nav class="nav-tabs">
+    <button id="btn-vlt" class="tab active-vlt" onclick="setMarca('VLT')">GAMA VLT®</button>
+    <button id="btn-vacon" class="tab" onclick="setMarca('VACON')">GAMA VACON®</button>
+</nav>
+
+<div class="search-box">
+    <input type="text" id="buscador" placeholder="Buscar por modelo o aplicación (ej: 'Bomba', 'FC 302')..." onkeyup="render()">
+</div>
+
+<div class="container">
+    <div id="main-grid" class="grid"></div>
+</div>
+
+<script>
+    const variadores = [
+        // --- VLT MODELS ---
+        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M0", desc: "Compacto, plug-and-play.", manual: "https://assets.danfoss.com/documents/271209/AQ276736419659en-000101.pdf" },
+        { id: "FC280", marca: "VLT", nombre: "Midi Drive FC 280", serie: "M1-M5", desc: "Sustituto del 2800, alta flexibilidad.", manual: "https://assets.danfoss.com/documents/270803/AQ275647333269es-000801.pdf" },
+        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 301/302", serie: "A, B, C, D, E, F", desc: "El estándar industrial avanzado.", manual: "fc302.pdf" },
+        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A, B, C, D, E, F", desc: "Especialista en edificios y clima.", manual: "fc102.pdf" },
+        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A, B, C, D, E, F", desc: "Optimizado para bombeo y agua.", manual: "fc202.pdf" },
+        { id: "FC103", marca: "VLT", nombre: "Refrigeration Drive FC 103", serie: "A, B, C", desc: "Control para compresores y fans.", manual: "fc103.pdf" },
+        { id: "LD302", marca: "VLT", nombre: "Lift Drive LD 302", serie: "B, C", desc: "Específico para ascensores.", manual: "ld302.pdf" },
+        { id: "MCD600", marca: "VLT", nombre: "Soft Starter MCD 600", serie: "S1-S3", desc: "Arrancador suave de última generación.", manual: "https://assets.danfoss.com/documents/274868/AQ262141844215es-000401.pdf" },
+        { id: "MCD202", marca: "VLT", nombre: "Soft Starter MCD 201/202", serie: "S1-S2", desc: "Arrancador compacto.", manual: "https://assets.danfoss.com/documents/276741/AQ35792881056301-000101.pdf" },
+        { id: "FCD302", marca: "VLT", nombre: "Decentral Drive FCD 302", serie: "Decentral", desc: "Montaje directo en motor o pared.", manual: "fcd302.pdf" },
+
+        // --- VACON MODELS ---
+        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4-MR12", desc: "Versátil para cualquier industria.", manual: "https://assets.danfoss.com/documents/317031/AB275637269262en-000901.pdf" },
+        { id: "V100FLOW", marca: "VACON", serie: "MR4-MR12", nombre: "VACON® 100 FLOW", desc: "Funciones específicas de bombeo.", manual: "https://assets.danfoss.com/documents/319322/AB298035655957en-000801.pdf" },
+        { id: "V20", marca: "VACON", nombre: "VACON® 20", serie: "MI1-MI5", desc: "Potencia compacta para OEMs.", manual: "https://assets.danfoss.com/documents/270885/AQ361180907730es-000201.pdf" },
+        { id: "V10", marca: "VACON", nombre: "VACON® 10", serie: "MI1-MI3", desc: "Simplicidad y ahorro de espacio.", manual: "vacon10.pdf" },
+        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4-FR14", desc: "Alto rendimiento y precisión.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" },
+        { id: "NXS", marca: "VACON", nombre: "VACON® NXS", serie: "FR4-FR9", desc: "Fiabilidad probada.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" },
+        { id: "NXC", marca: "VACON", nombre: "VACON® NXC", serie: "Enclosed", desc: "Montado en armario de fábrica.", manual: "nxc.pdf" },
+        { id: "V20X", marca: "VACON", nombre: "VACON® 20 X", serie: "IP66", desc: "Descentralizado con alta protección.", manual: "v20x.pdf" }
+    ];
+
+    let marcaActual = 'VLT';
+
+    function setMarca(m) {
+        marcaActual = m;
+        // UI Actualización
+        document.getElementById('btn-vlt').className = `tab ${m === 'VLT' ? 'active-vlt' : ''}`;
+        document.getElementById('btn-vacon').className = `tab ${m === 'VACON' ? 'active-vacon' : ''}`;
+        render();
+    }
+
+    function render() {
+        const query = document.getElementById('buscador').value.toLowerCase();
+        const grid = document.getElementById('main-grid');
+        
+        const filtrados = variadores.filter(v => 
+            v.marca === marcaActual && 
+            (v.nombre.toLowerCase().includes(query) || v.desc.toLowerCase().includes(query))
+        );
+
+        grid.innerHTML = filtrados.map(v => `
+            <div class="card">
+                <div class="card-header ${v.marca === 'VLT' ? 'vlt-head' : 'vacon-head'}">
+                    ${v.marca}
+                </div>
+                <div class="card-body">
+                    <h3>${v.nombre}</h3>
+                    <p>${v.desc}</p>
+                    <span class="tag">Frames: ${v.serie}</span>
+                </div>
+                <a href="manuales/${v.manual}" class="btn-download" target="_blank">📄 VER MANUAL PDF</a>
+            </div>
+        `).join('');
+    }
+
+    // Inicio
+    window.onload = render;
+</script>
+
+</body>
+</html>
