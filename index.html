@@ -111,17 +111,20 @@
     // DATOS CON ENLACES DIRECTOS (Sin carpetas locales para evitar error 404)
     const variadores = [
         // --- GAMA VLT ---
-        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M1-M5", desc: "Compacto, confiable y fácil de configurar.", manual: "https://assets.danfoss.com/documents/271209/AQ276736419659en-000101.pdf" },
+        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M1-M5", desc: "Compacto, confiable y fácil de configurar.", manual: "https://inprocess.com.pe/datasheets/variadores-de-velocidad/FC51_Guia_programacion.pdf" },
         { id: "FC280", marca: "VLT", nombre: "Midi Drive FC 280", serie: "M1-M5", desc: "El sustituto moderno del VLT 2800.", manual: "https://assets.danfoss.com/documents/270803/AQ275647333269es-000801.pdf" },
-        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 302", serie: "A-F", desc: "Alto rendimiento para cualquier aplicación industrial.", manual: "https://assets.danfoss.com/documents/latest/210842/ANT410972624458es-000101.pdf" },
-        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A-F", desc: "Optimizado para ventilación y aire acondicionado.", manual: "https://assets.danfoss.com/documents/210118/ANT403204368146es-000101.pdf" },
-        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A-F", desc: "Especialista en tratamiento de agua y bombeo.", manual: "https://assets.danfoss.com/documents/210459/ANT406606013627es-000101.pdf" },
+        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 302", serie: "A-F", desc: "Alto rendimiento para cualquier aplicación industrial.", manual: "https://files.danfoss.com/download/Drives/MG33AT05.pdf" },
+        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A-F", desc: "Optimizado para ventilación y aire acondicionado.", manual: "https://files.danfoss.com/download/Drives/DrivesMG11CE05.pdf" },
+        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A-F", desc: "Especialista en tratamiento de agua y bombeo.", manual: "https://files.danfoss.com/download/Drives/DrivesMG21A505.pdf" },
+        { id: "MCD 600", marca: "VLT", nombre: "MCD 600", serie: "A-F", desc: "Arrancador.", manual: "https://assets.danfoss.com/documents/274868/AQ262141844215es-000401.pdf" },
+        { id: "MCD 202", marca: "VLT", nombre: "MCD 202", serie: "A-F", desc: "Arrancador.", manual: "https://assets.danfoss.com/documents/276741/AQ35792881056301-000101.pdf" },
 
         // --- GAMA VACON ---
-        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4-MR12", desc: "Versatilidad total para la industria pesada.", manual: "https://assets.danfoss.com/documents/317031/AB275637269262en-000901.pdf" },
+        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4-MR12", desc: "Versatilidad total para la industria pesada.", manual: "https://www.setefer.com/wp-content/uploads/Vacon-100-Industrial-Application-Manual-DPD01036I-ES.pdf?srsltid=AfmBOoogZ2u_hrFNmm1BAk1osUDoe705a4FkiXPu1Bn5sKU0sRrOm98A" },
         { id: "V100FLOW", marca: "VACON", nombre: "VACON® 100 FLOW", serie: "MR4-MR12", desc: "Control de flujo y funciones multipompa.", manual: "https://www.motronic.es/upfiles/productes_tenda_img/files/135u1943__vacon_100_flow__3x400vac__ip21_55_kw-es_72595.pdf" },
         { id: "V20", marca: "VACON", nombre: "VACON® 20", serie: "MI1-MI5", desc: "Potencia compacta con PLC incorporado.", manual: "https://assets.danfoss.com/documents/270885/AQ361180907730es-000201.pdf" },
-        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4-FR14", desc: "Control de alta precisión para aplicaciones exigentes.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" }
+        { id: "V20 PFC", marca: "VACON", nombre: "VACON® 20 PFC", serie: "MI1-MI5", desc: "Potencia compacta con PLC incorporado.", manual: "https://www.rpmecatronica.com/system/storage/download/V20PFC%20-%20Guía%20rápida%20v2.pdf?key=ZxSUMEdvwrcalkSFFAFtxsd0k0VGvtQp" },
+        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4-FR14", desc: "Control de alta precisión para aplicaciones exigentes.", manual: "https://ecommerce-uk.interpuls.com/documenti/999%20Obsolete%20Products/Inverter%20NXS/9001279%20-%20MANUALE%20INVERTER%20VACON%20COMPLETO%20-%20ES%20-%20R01.pdf" }
     ];
 
     let marcaActual = 'VLT';
