@@ -5,84 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Maestro Danfoss - VLT & VACON</title>
     <style>
+        /* --- VARIABLES DE MARCA --- */
         :root {
             --red-danfoss: #d71920;
             --blue-vacon: #00458b;
             --dark: #2d2d2d;
-            --light-bg: #f0f2f5;
+            --light-bg: #f4f7f6;
+            --white: #ffffff;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-bg); margin: 0; color: var(--dark); }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            color: var(--dark);
+            line-height: 1.6;
+        }
         
-        header { background: white; padding: 30px; text-align: center; border-bottom: 4px solid var(--red-danfoss); }
-        h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+        /* --- CABECERA --- */
+        header { 
+            background: var(--white); 
+            padding: 40px 20px; 
+            text-align: center; 
+            border-bottom: 5px solid var(--red-danfoss);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
+        p.subtitle { margin-top: 10px; color: #666; font-size: 14px; }
 
-        /* Navegación de Pantallas */
-        .nav-tabs { display: flex; background: var(--dark); sticky: top; }
+        /* --- NAVEGACIÓN STICKY --- */
+        .nav-tabs { 
+            display: flex; 
+            background: var(--dark); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
         .tab { 
-            flex: 1; padding: 20px; text-align: center; color: white; 
-            cursor: pointer; font-weight: bold; transition: 0.3s; border: none; background: none;
-            font-size: 16px;
+            flex: 1; padding: 18px; text-align: center; color: white; 
+            cursor: pointer; font-weight: bold; transition: all 0.3s ease; 
+            border: none; background: none; font-size: 15px;
+            text-transform: uppercase;
         }
         .tab:hover { background: #444; }
         .tab.active-vlt { background: var(--red-danfoss); }
         .tab.active-vacon { background: var(--blue-vacon); }
 
-        /* Buscador */
-        .search-box { padding: 20px; text-align: center; background: white; }
+        /* --- BUSCADOR --- */
+        .search-box { 
+            padding: 30px 20px; 
+            text-align: center; 
+            background: var(--white);
+        }
         #buscador { 
-            width: 90%; max-width: 600px; padding: 12px 20px; 
-            border-radius: 25px; border: 2px solid #ddd; outline: none; font-size: 16px;
+            width: 100%; max-width: 550px; padding: 14px 25px; 
+            border-radius: 30px; border: 2px solid #e0e0e0; 
+            outline: none; font-size: 16px; transition: 0.3s;
+        }
+        #buscador:focus { border-color: var(--red-danfoss); box-shadow: 0 0 8px rgba(215,25,32,0.2); }
+
+        /* --- GRID DE CONTENIDO --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 30px; 
         }
 
-        /* Contenedor de Tarjetas */
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-
+        /* --- TARJETAS --- */
         .card { 
-            background: white; border-radius: 12px; overflow: hidden; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s;
-            display: flex; flex-direction: column;
+            background: var(--white); 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; 
+            flex-direction: column;
+            border: 1px solid #eee;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12); 
+        }
         
-        .card-header { padding: 20px; color: white; font-weight: bold; }
+        .card-header { padding: 12px 20px; color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px; }
         .vlt-head { background: var(--red-danfoss); }
         .vacon-head { background: var(--blue-vacon); }
 
-        .card-body { padding: 20px; flex-grow: 1; }
-        .card-body h3 { margin: 0 0 10px 0; font-size: 18px; }
-        .card-body p { margin: 5px 0; color: #666; font-size: 14px; }
+        .card-body { padding: 25px; flex-grow: 1; }
+        .card-body h3 { margin: 0 0 12px 0; font-size: 20px; color: #1a1a1a; }
+        .card-body p { margin: 0; color: #555; font-size: 14px; min-height: 60px; }
         
         .tag { 
-            display: inline-block; padding: 4px 10px; background: #eee; 
-            border-radius: 4px; font-size: 11px; margin-top: 10px; font-weight: bold;
+            display: inline-block; padding: 5px 12px; background: #f0f0f0; 
+            border-radius: 20px; font-size: 11px; margin-top: 20px; 
+            font-weight: 700; color: #444; border: 1px solid #ddd;
         }
 
         .btn-download {
-            margin: 20px; padding: 12px; text-align: center;
+            margin: 0 25px 25px 25px; padding: 14px; text-align: center;
             background: var(--dark); color: white; text-decoration: none;
-            border-radius: 6px; font-weight: bold; transition: 0.3s;
+            border-radius: 8px; font-weight: bold; transition: 0.3s;
+            font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn-download:hover { background: #000; }
+        .btn-download:hover { background: #000; letter-spacing: 0.5px; }
 
-        /* Responsive */
-        @media (max-width: 600px) { .nav-tabs { flex-direction: column; } }
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) { 
+            .nav-tabs { flex-direction: row; font-size: 12px; }
+            .tab { padding: 15px 5px; font-size: 13px; }
+            h1 { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Repositorio Técnico de Convertidores</h1>
+    <h1>Documentación Técnica Danfoss</h1>
+    <p class="subtitle">Acceso directo a manuales oficiales VLT® y VACON®</p>
 </header>
 
 <nav class="nav-tabs">
-    <button id="btn-vlt" class="tab active-vlt" onclick="setMarca('VLT')">GAMA VLT®</button>
-    <button id="btn-vacon" class="tab" onclick="setMarca('VACON')">GAMA VACON®</button>
+    <button id="btn-vlt" class="tab active-vlt" onclick="setMarca('VLT')">Gama VLT®</button>
+    <button id="btn-vacon" class="tab" onclick="setMarca('VACON')">Gama VACON®</button>
 </nav>
 
 <div class="search-box">
-    <input type="text" id="buscador" placeholder="Buscar por modelo o aplicación (ej: 'Bomba', 'FC 302')..." onkeyup="render()">
+    <input type="text" id="buscador" placeholder="Buscar por modelo (ej: FC 302, NXP, HVAC...)" onkeyup="render()">
 </div>
 
 <div class="container">
@@ -90,65 +140,72 @@
 </div>
 
 <script>
+    // BASE DE DATOS CON ENLACES OFICIALES
     const variadores = [
         // --- VLT MODELS ---
-        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M0", desc: "Compacto, plug-and-play.", manual: "https://assets.danfoss.com/documents/271209/AQ276736419659en-000101.pdf" },
-        { id: "FC280", marca: "VLT", nombre: "Midi Drive FC 280", serie: "M1-M5", desc: "Sustituto del 2800, alta flexibilidad.", manual: "https://assets.danfoss.com/documents/270803/AQ275647333269es-000801.pdf" },
-        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 301/302", serie: "A, B, C, D, E, F", desc: "El estándar industrial avanzado.", manual: "fc302.pdf" },
-        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A, B, C, D, E, F", desc: "Especialista en edificios y clima.", manual: "fc102.pdf" },
-        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A, B, C, D, E, F", desc: "Optimizado para bombeo y agua.", manual: "fc202.pdf" },
-        { id: "FC103", marca: "VLT", nombre: "Refrigeration Drive FC 103", serie: "A, B, C", desc: "Control para compresores y fans.", manual: "fc103.pdf" },
-        { id: "LD302", marca: "VLT", nombre: "Lift Drive LD 302", serie: "B, C", desc: "Específico para ascensores.", manual: "ld302.pdf" },
-        { id: "MCD600", marca: "VLT", nombre: "Soft Starter MCD 600", serie: "S1-S3", desc: "Arrancador suave de última generación.", manual: "https://assets.danfoss.com/documents/274868/AQ262141844215es-000401.pdf" },
-        { id: "MCD202", marca: "VLT", nombre: "Soft Starter MCD 201/202", serie: "S1-S2", desc: "Arrancador compacto.", manual: "https://assets.danfoss.com/documents/276741/AQ35792881056301-000101.pdf" },
-        { id: "FCD302", marca: "VLT", nombre: "Decentral Drive FCD 302", serie: "Decentral", desc: "Montaje directo en motor o pared.", manual: "fcd302.pdf" },
+        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M1, M2, M3", desc: "Compacto y de confianza. Máxima eficiencia en aplicaciones sencillas de montaje lado a lado.", manual: "https://assets.danfoss.com/documents/271209/AQ276736419659en-000101.pdf" },
+        { id: "FC280", marca: "VLT", nombre: "Midi Drive FC 280", serie: "M1 a M5", desc: "Evolución del 2800. Flexibilidad total y comunicación integrada para fabricantes de maquinaria (OEM).", manual: "https://assets.danfoss.com/documents/270803/AQ275647333269es-000801.pdf" },
+        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 302", serie: "A, B, C, D, E, F", desc: "Diseñado para un funcionamiento variable en cualquier máquina o línea de producción industrial.", manual: "https://assets.danfoss.com/documents/latest/210842/ANT410972624458es-000101.pdf" },
+        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A, B, C, D, E, F", desc: "Especializado en climatización, bombas y ventiladores en edificios inteligentes.", manual: "https://assets.danfoss.com/documents/210118/ANT403204368146es-000101.pdf" },
+        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A, B, C, D, E, F", desc: "Optimizado para aplicaciones de agua y aguas residuales con funciones de protección de bombas.", manual: "https://assets.danfoss.com/documents/210459/ANT406606013627es-000101.pdf" },
+        { id: "MCD600", marca: "VLT", nombre: "Soft Starter MCD 600", serie: "S1, S2, S3", desc: "Arrancador suave avanzado con limpieza de bomba y frenado dinámico inteligente.", manual: "https://assets.danfoss.com/documents/274868/AQ262141844215es-000401.pdf" },
 
         // --- VACON MODELS ---
-        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4-MR12", desc: "Versátil para cualquier industria.", manual: "https://assets.danfoss.com/documents/317031/AB275637269262en-000901.pdf" },
-        { id: "V100FLOW", marca: "VACON", serie: "MR4-MR12", nombre: "VACON® 100 FLOW", desc: "Funciones específicas de bombeo.", manual: "https://assets.danfoss.com/documents/319322/AB298035655957en-000801.pdf" },
-        { id: "V20", marca: "VACON", nombre: "VACON® 20", serie: "MI1-MI5", desc: "Potencia compacta para OEMs.", manual: "https://assets.danfoss.com/documents/270885/AQ361180907730es-000201.pdf" },
-        { id: "V10", marca: "VACON", nombre: "VACON® 10", serie: "MI1-MI3", desc: "Simplicidad y ahorro de espacio.", manual: "vacon10.pdf" },
-        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4-FR14", desc: "Alto rendimiento y precisión.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" },
-        { id: "NXS", marca: "VACON", nombre: "VACON® NXS", serie: "FR4-FR9", desc: "Fiabilidad probada.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" },
-        { id: "NXC", marca: "VACON", nombre: "VACON® NXC", serie: "Enclosed", desc: "Montado en armario de fábrica.", manual: "nxc.pdf" },
-        { id: "V20X", marca: "VACON", nombre: "VACON® 20 X", serie: "IP66", desc: "Descentralizado con alta protección.", manual: "v20x.pdf" }
+        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4 a MR12", desc: "Versatilidad y larga vida útil para una amplia gama de aplicaciones industriales pesadas.", manual: "https://assets.danfoss.com/documents/317031/AB275637269262en-000901.pdf" },
+        { id: "V100FLOW", marca: "VACON", nombre: "VACON® 100 FLOW", serie: "MR4 a MR12", desc: "Dedicado a la mejora del control de caudal en sistemas de bombeo y ventilación.", manual: "https://assets.danfoss.com/documents/319322/AB298035655957en-000801.pdf" },
+        { id: "V20", marca: "VACON", nombre: "VACON® 20", serie: "MI1 a MI5", desc: "Compacto pero lleno de funciones. Incluye PLC programable integrado para personalización.", manual: "https://assets.danfoss.com/documents/270885/AQ361180907730es-000201.pdf" },
+        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4 a FR14", desc: "Variador de alto rendimiento para aplicaciones que exigen precisión y potencia robusta.", manual: "https://assets.danfoss.com/documents/277037/AQ275638903263es-000601.pdf" }
     ];
 
     let marcaActual = 'VLT';
 
+    // Función para cambiar entre VLT y VACON
     function setMarca(m) {
         marcaActual = m;
-        // UI Actualización
-        document.getElementById('btn-vlt').className = `tab ${m === 'VLT' ? 'active-vlt' : ''}`;
-        document.getElementById('btn-vacon').className = `tab ${m === 'VACON' ? 'active-vacon' : ''}`;
+        document.getElementById('btn-vlt').classList.toggle('active-vlt', m === 'VLT');
+        document.getElementById('btn-vacon').classList.toggle('active-vacon', m === 'VACON');
         render();
     }
 
+    // Función principal para dibujar las tarjetas
     function render() {
         const query = document.getElementById('buscador').value.toLowerCase();
         const grid = document.getElementById('main-grid');
         
+        // Filtramos por marca y por texto de búsqueda
         const filtrados = variadores.filter(v => 
             v.marca === marcaActual && 
             (v.nombre.toLowerCase().includes(query) || v.desc.toLowerCase().includes(query))
         );
 
+        // Feedback si no hay resultados
+        if (filtrados.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #999;">
+                    <p style="font-size: 18px;">No se encontraron resultados para su búsqueda.</p>
+                </div>`;
+            return;
+        }
+
+        // Generamos el HTML dinámico
         grid.innerHTML = filtrados.map(v => `
             <div class="card">
                 <div class="card-header ${v.marca === 'VLT' ? 'vlt-head' : 'vacon-head'}">
-                    ${v.marca}
+                    SOPORTE ${v.marca}
                 </div>
                 <div class="card-body">
                     <h3>${v.nombre}</h3>
                     <p>${v.desc}</p>
-                    <span class="tag">Frames: ${v.serie}</span>
+                    <span class="tag">Bastidores: ${v.serie}</span>
                 </div>
-                <a href="manuales/${v.manual}" class="btn-download" target="_blank">📄 VER MANUAL PDF</a>
+                <a href="${v.manual}" class="btn-download" target="_blank" rel="noopener noreferrer">
+                    <span>PDF</span> DESCARGAR MANUAL OFICIAL
+                </a>
             </div>
         `).join('');
     }
 
-    // Inicio
+    // Carga inicial
     window.onload = render;
 </script>
 
