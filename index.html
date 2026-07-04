@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presupuesto Inteligente - Almacenamiento Blindado</title>
+    <title>Presupuesto Inteligente - Control Antibloqueo</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -37,7 +37,7 @@
 
         header {
             text-align: center;
-            margin: 10px 0 15px 0;
+            margin: 10px 0 10px 0;
         }
 
         header h1 {
@@ -45,6 +45,32 @@
             font-size: 2rem;
             font-weight: 800;
         }
+
+        /* BARRA DE COPIA DE SEGURIDAD FRENTE A BLOQUEOS */
+        .backup-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn-backup {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: white;
+            transition: opacity 0.2s;
+        }
+        .btn-backup:hover { opacity: 0.9; }
+        .btn-export { background-color: var(--income); }
+        .btn-import { background-color: var(--primary); }
 
         /* CONTROL DE MES */
         .month-control {
@@ -177,7 +203,6 @@
         .badge.gasto { background-color: #fee2e2; color: #991b1b; }
         .badge.recurrente { background-color: #e0f2fe; color: #0369a1; margin-left: 4px; }
 
-        /* BOTONES DE ACCIÓN */
         .action-cells { display: flex; gap: 6px; justify-content: center; }
         .btn-action {
             border: 1px solid transparent; cursor: pointer; font-size: 0.8rem; font-weight: bold;
@@ -189,12 +214,6 @@
         .btn-delete:hover { background-color: var(--expense); color: white; }
 
         .empty-state { text-align: center; padding: 30px; color: #9ca3af; font-style: italic; }
-        
-        /* ALERTA DE CONFIGURACIÓN */
-        .storage-warning {
-            background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;
-            padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; display: none;
-        }
     </style>
 </head>
 <body>
@@ -204,22 +223,28 @@
         <h1>Presupuesto Inteligente</h1>
     </header>
 
-    <div id="storage-alert" class="storage-warning">
-        <strong>⚠️ Error de Almacenamiento:</strong> Tu navegador está impidiendo que la aplicación guarde los datos. Esto suele ocurrir si usas el <em>Modo Incógnito</em>, si tienes las cookies bloqueadas por completo, o por restricciones de seguridad al abrir el archivo directamente desde tu disco duro sin un servidor local. Los cambios se perderán al cerrar la pestaña.
+    <!-- Barra de salvaguarda de datos -->
+    <div class="backup-bar">
+        <button class="btn-backup btn-export" onclick="exportToJSON()">💾 Guardar Copia en mi PC</button>
+        <button class="btn-backup btn-import" onclick="document.getElementById('import-file').click()">📂 Cargar mi Copia</button>
+        <input type="file" id="import-file" accept=".json" onchange="importFromJSON(this)" style="display: none;">
     </div>
 
+    <!-- Panel de Selección de Mes -->
     <div class="month-control">
         <button onclick="moveMonth(-1)">◀ Ant</button>
         <input type="month" id="global-month" onchange="handleMonthChange(this.value)">
         <button onclick="moveMonth(1)">Sig ▶</button>
     </div>
 
+    <!-- Barra de Navegación -->
     <nav class="navbar">
         <button class="nav-btn active" id="btn-page1" onclick="goToPage(1)">1. Estado</button>
         <button class="nav-btn" id="btn-page2" onclick="goToPage(2)">2. Añadir</button>
         <button class="nav-btn" id="btn-page3" onclick="goToPage(3)">3. Historial</button>
     </nav>
 
+    <!-- PÁGINA 1: ESTADO ACTUAL -->
     <div id="page1" class="page active">
         <h2>Balance General del Mes</h2>
         <div class="quick-summary">
@@ -243,6 +268,7 @@
         <button class="btn-block" onclick="goToPage(2)" style="margin-top: 15px;">Añadir Movimiento +</button>
     </div>
 
+    <!-- PÁGINA 2: AÑADIR / EDITAR MOVIMIENTO -->
     <div id="page2" class="page">
         <h2 id="form-title">2. Registrar Movimiento</h2>
         <form id="finance-form">
@@ -280,6 +306,7 @@
         </form>
     </div>
 
+    <!-- PÁGINA 3: HISTORIAL -->
     <div id="page3" class="page">
         <h2>3. Historial de este Mes</h2>
         <div class="table-wrapper">
@@ -303,19 +330,19 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'mi_presupuesto_definitivo'; // Llave fija para evitar pérdidas futuras
+    const STORAGE_KEY = 'mi_presupuesto_definitivo';
     const categories = ["Alimentación", "Vivienda", "Educación", "Entretenimiento", "Suscripciones", "Otros"];
 
     let currentYearMonth = new Date().toISOString().substring(0, 7);
     let transactions = [];
     let editingIndex = -1;
 
-    // TEST DE COMPATIBILIDAD CON LOCALSTORAGE
+    // Intentar leer el almacenamiento local habitual
     try {
         const testStorage = localStorage.getItem(STORAGE_KEY);
-        transactions = JSON.parse(testStorage) || [];
+        if(testStorage) transactions = JSON.parse(testStorage);
     } catch (e) {
-        document.getElementById('storage-alert').style.display = 'block';
+        console.log("El navegador restringe el uso de LocalStorage directo.");
     }
 
     const form = document.getElementById('finance-form');
@@ -328,6 +355,46 @@
     const monthPicker = document.getElementById('global-month');
     const emptyStateMsg = document.getElementById('empty-state-msg');
     const historyTable = document.getElementById('history-table');
+
+    // BOTÓN DE COPIA DE SEGURIDAD MANUAL: DESCARGAR ARCHIVO JSON
+    function exportToJSON() {
+        if (transactions.length === 0) {
+            alert("No hay ningún movimiento registrado para guardar todavía.");
+            return;
+        }
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `copia_seguridad_presupuesto.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    // BOTÓN DE COPIA DE SEGURIDAD MANUAL: LEER ARCHIVO JSON DESCARGADO
+    function importFromJSON(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    transactions = importedData;
+                    // Intentamos actualizar local por si acaso
+                    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions)); } catch(err){}
+                    updateUI();
+                    alert("¡Copia de seguridad restaurada con éxito!");
+                } else {
+                    alert("El archivo seleccionado no tiene el formato correcto.");
+                }
+            } catch (err) {
+                alert("Hubo un error al intentar leer el archivo de copia.");
+            }
+        };
+        reader.readAsText(file);
+        input.value = ''; // Resetear input
+    }
 
     function goToPage(pageNumber) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -474,12 +541,9 @@
             budgetProgressContainer.appendChild(item);
         });
 
-        // GUARDADO INTELIGENTE CON CONTROL DE CRASH
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
-        } catch(e) {
-            console.error("No se pudo guardar en el almacenamiento local comercial.");
-        }
+        } catch(e) {}
     }
 
     function editTransaction(index) {
