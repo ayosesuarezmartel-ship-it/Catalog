@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presupuesto sin Límites - Basado en Ingresos</title>
+    <title>Presupuesto Inteligente - Control Total</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -82,7 +82,7 @@
             outline: none;
         }
 
-        /* NAVEGACIÓN REESCRITA (3 PÁGINAS) */
+        /* NAVEGACIÓN (3 PÁGINAS) */
         .navbar {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -160,16 +160,16 @@
         .mini-card h4 { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; }
         .mini-card p { font-size: 1.25rem; font-weight: bold; margin-top: 4px; }
 
-        /* BARRAS DE DISTRIBUCIÓN DE INGRESOS */
+        /* BARRAS DE DISTRIBUCIÓN */
         .budget-progress-item { margin-bottom: 18px; }
         .budget-info { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; gap: 10px; }
         .budget-bar-bg { background-color: #e5e7eb; height: 12px; border-radius: 10px; overflow: hidden; }
         .budget-bar-fill { height: 100%; width: 0%; transition: width 0.4s; }
 
-        /* TABLAS RESILIENTES */
+        /* TABLAS Y ACCIONES */
         .table-wrapper { overflow-x: auto; margin-top: 15px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
-        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 650px; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
         th { background-color: #f8fafc; color: #4b5563; font-weight: 600; }
         
         .badge { padding: 3px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; display: inline-block; }
@@ -177,7 +177,50 @@
         .badge.gasto { background-color: #fee2e2; color: #991b1b; }
         .badge.recurrente { background-color: #e0f2fe; color: #0369a1; margin-left: 4px; }
 
-        .btn-delete { background: transparent; color: var(--expense); border: none; cursor: pointer; font-size: 1.1rem; }
+        /* BOTONES DE ACCIÓN EN EL HISTORIAL */
+        .action-cells {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            border: 1px solid transparent; 
+            cursor: pointer; 
+            font-size: 0.8rem; 
+            font-weight: bold;
+            padding: 6px 10px; 
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background-color: #eff2ff;
+            color: var(--primary);
+            border-color: #e0e7ff;
+        }
+        .btn-edit:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-delete { 
+            background-color: #fef2f2; 
+            color: var(--expense); 
+            border-color: #fee2e2; 
+        }
+        .btn-delete:hover {
+            background-color: var(--expense);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #9ca3af;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -187,18 +230,21 @@
         <h1>Presupuesto Inteligente</h1>
     </header>
 
+    <!-- Panel de Selección de Mes -->
     <div class="month-control">
         <button onclick="moveMonth(-1)">◀ Ant</button>
         <input type="month" id="global-month" onchange="handleMonthChange(this.value)">
         <button onclick="moveMonth(1)">Sig ▶</button>
     </div>
 
+    <!-- Barra de Navegación -->
     <nav class="navbar">
         <button class="nav-btn active" id="btn-page1" onclick="goToPage(1)">1. Estado</button>
         <button class="nav-btn" id="btn-page2" onclick="goToPage(2)">2. Añadir</button>
         <button class="nav-btn" id="btn-page3" onclick="goToPage(3)">3. Historial</button>
     </nav>
 
+    <!-- PÁGINA 1: ESTADO ACTUAL -->
     <div id="page1" class="page active">
         <h2>Balance General del Mes</h2>
         <div class="quick-summary">
@@ -222,8 +268,9 @@
         <button class="btn-block" onclick="goToPage(2)" style="margin-top: 15px;">Añadir Movimiento +</button>
     </div>
 
+    <!-- PÁGINA 2: AÑADIR / EDITAR MOVIMIENTO -->
     <div id="page2" class="page">
-        <h2>2. Registrar Movimiento</h2>
+        <h2 id="form-title">2. Registrar Movimiento</h2>
         <form id="finance-form">
             <div class="form-group">
                 <label for="type">Tipo de transacción</label>
@@ -234,7 +281,7 @@
             </div>
             <div class="form-group">
                 <label for="description">Descripción</label>
-                <input type="text" id="description" placeholder="Ej. Nómina, Compra Súper, Alquiler" required>
+                <input type="text" id="description" placeholder="Ej. Nómina, Compra Súper, Luz" required>
             </div>
             <div class="form-group">
                 <label for="amount">Monto (€)</label>
@@ -251,27 +298,33 @@
             <div class="form-group" style="background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px dashed #bfdbfe;">
                 <label for="end-date" style="color: #1e40af;">🔄 Fin de Pagos (Opcional)</label>
                 <input type="date" id="end-date">
-                <small style="color: #1e3a8a; display:block; margin-top: 4px;">Si este gasto se repite, pon la fecha límite y se copiará solo mes a mes.</small>
+                <small style="color: #1e3a8a; display:block; margin-top: 4px;">Si este gasto se repite, pon la fecha límite y aparecerá mes a mes automáticamente.</small>
             </div>
-            <button type="submit" class="btn-block">Guardar Movimiento</button>
+            
+            <button type="submit" id="btn-submit" class="btn-block">Guardar Movimiento</button>
+            <button type="button" id="btn-cancel-edit" class="btn-block" style="background-color: #6b7280; margin-top: 8px; display: none;" onclick="cancelEdit()">Cancelar Edición</button>
         </form>
     </div>
 
+    <!-- PÁGINA 3: HISTORIAL -->
     <div id="page3" class="page">
         <h2>3. Historial de este Mes</h2>
         <div class="table-wrapper">
-            <table>
+            <table id="history-table">
                 <thead>
                     <tr>
-                        <th style="width: 40%;">Descripción</th>
+                        <th style="width: 35%;">Descripción</th>
                         <th style="width: 20%;">Categoría</th>
                         <th style="width: 15%;">Tipo</th>
                         <th style="width: 15%;">Monto</th>
-                        <th style="width: 10%;">Acción</th>
+                        <th style="width: 15%; text-align: center;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="transaction-list"></tbody>
             </table>
+            <div id="empty-state-msg" class="empty-state" style="display: none;">
+                No hay movimientos registrados en este mes.
+            </div>
         </div>
     </div>
 </div>
@@ -280,13 +333,19 @@
     const categories = ["Alimentación", "Vivienda", "Educación", "Entretenimiento", "Suscripciones", "Otros"];
 
     let currentYearMonth = new Date().toISOString().substring(0, 7);
-    let transactions = JSON.parse(localStorage.getItem('nolimits_transactions')) || [];
+    let transactions = JSON.parse(localStorage.getItem('editable_transactions')) || [];
+    let editingIndex = -1; // -1 significa que estamos creando uno nuevo, cualquier otro número es el índice a editar
 
     const form = document.getElementById('finance-form');
+    const formTitle = document.getElementById('form-title');
+    const btnSubmit = document.getElementById('btn-submit');
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
     const categorySelect = document.getElementById('category');
     const budgetProgressContainer = document.getElementById('budget-progress-container');
     const transactionList = document.getElementById('transaction-list');
     const monthPicker = document.getElementById('global-month');
+    const emptyStateMsg = document.getElementById('empty-state-msg');
+    const historyTable = document.getElementById('history-table');
 
     function goToPage(pageNumber) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -324,9 +383,11 @@
             categorySelect.appendChild(option);
         });
 
-        const today = new Date();
-        const currentDayStr = String(today.getDate()).padStart(2, '0');
-        document.getElementById('date').value = `${currentYearMonth}-${currentDayStr}`;
+        if (editingIndex === -1) {
+            const today = new Date();
+            const currentDayStr = String(today.getDate()).padStart(2, '0');
+            document.getElementById('date').value = `${currentYearMonth}-${currentDayStr}`;
+        }
     }
 
     function isTransactionActiveInMonth(t, targetMonth) {
@@ -343,9 +404,11 @@
 
         let totalIncome = 0;
         let totalSpent = 0;
+        let visibleCount = 0;
 
         transactions.forEach((t, index) => {
             if (isTransactionActiveInMonth(t, currentYearMonth)) {
+                visibleCount++;
                 const amount = parseFloat(t.amount);
                 const isIncome = t.type === 'ingreso';
                 const isRecurring = t.endDate ? true : false;
@@ -361,7 +424,7 @@
                 }
 
                 const row = document.createElement('tr');
-                if(isFromPreviousMonth) row.style.backgroundColor = "#fdfdfd";
+                if(isFromPreviousMonth) row.style.backgroundColor = "#fcfcfc";
 
                 row.innerHTML = `
                     <td>
@@ -374,13 +437,24 @@
                     <td style="color: ${isIncome ? 'var(--income)' : 'var(--expense)'}; font-weight:700; white-space: nowrap;">
                         ${isIncome ? '+' : '-'}${amount.toFixed(2)} €
                     </td>
-                    <td style="text-align: center;">
-                        <button class="btn-delete" onclick="deleteTransaction(${index})">🗑️</button>
+                    <td>
+                        <div class="action-cells">
+                            <button class="btn-action btn-edit" onclick="editTransaction(${index})">✏️ Editar</button>
+                            <button class="btn-action btn-delete" onclick="deleteTransaction(${index})">🗑️ Borrar</button>
+                        </div>
                     </td>
                 `;
                 transactionList.appendChild(row);
             }
         });
+
+        if (visibleCount === 0) {
+            emptyStateMsg.style.display = 'block';
+            historyTable.style.display = 'none';
+        } else {
+            emptyStateMsg.style.display = 'none';
+            historyTable.style.display = 'table';
+        }
 
         let remainingBudget = totalIncome - totalSpent;
         document.getElementById('sum-income').innerText = `${totalIncome.toFixed(2)} €`;
@@ -390,16 +464,14 @@
         const remainingText = document.getElementById('sum-remaining');
         remainingText.style.color = remainingBudget < 0 ? 'var(--expense)' : 'var(--income)';
 
-        // RENDERIZAR BARRAS EN BASE A LOS INGRESOS REALES TOTALES
+        // RENDERIZAR BARRAS
         budgetProgressContainer.innerHTML = '';
 
         categories.forEach(cat => {
             const spent = spentByCategory[cat] || 0;
-            // El porcentaje representa cuánto ocupa este gasto respecto al total de ingresos del mes
             const percent = totalIncome > 0 ? Math.min((spent / totalIncome) * 100, 100) : 0;
             const globalPercentText = totalIncome > 0 ? ((spent / totalIncome) * 100).toFixed(1) : "0.0";
             
-            // La barra cambia a color advertencia/rojo solo si los gastos globales están al límite
             let barColor = 'var(--primary)';
             if (remainingBudget < 0) {
                 barColor = 'var(--expense)';
@@ -421,7 +493,42 @@
             budgetProgressContainer.appendChild(item);
         });
 
-        localStorage.setItem('nolimits_transactions', JSON.stringify(transactions));
+        localStorage.setItem('editable_transactions', JSON.stringify(transactions));
+    }
+
+    // FUNCIÓN PARA ACTIVAR EL MODO EDICIÓN
+    function editTransaction(index) {
+        editingIndex = index;
+        const tx = transactions[index];
+
+        // Cambiar textos visuales del formulario
+        formTitle.innerText = "✏️ Editar Movimiento";
+        btnSubmit.innerText = "Actualizar Movimiento";
+        btnSubmit.style.backgroundColor = "var(--warning)";
+        btnCancelEdit.style.display = "block";
+
+        // Cargar datos en el formulario
+        document.getElementById('type').value = tx.type;
+        document.getElementById('description').value = tx.description;
+        document.getElementById('amount').value = tx.amount;
+        document.getElementById('category').value = tx.category;
+        document.getElementById('date').value = tx.date;
+        document.getElementById('end-date').value = tx.endDate || '';
+
+        // Mover al usuario a la página del formulario
+        goToPage(2);
+    }
+
+    // CANCELAR EDICIÓN Y VOLVER AL ESTADO DE REPOSITORIO NORMAL
+    function cancelEdit() {
+        editingIndex = -1;
+        form.reset();
+        formTitle.innerText = "2. Registrar Movimiento";
+        btnSubmit.innerText = "Guardar Movimiento";
+        btnSubmit.style.backgroundColor = "var(--primary)";
+        btnCancelEdit.style.display = "none";
+        initSetup();
+        goToPage(3); // Regresa al historial
     }
 
     form.addEventListener('submit', function(e) {
@@ -435,7 +542,7 @@
             return;
         }
 
-        const newTx = {
+        const dataTx = {
             type: document.getElementById('type').value,
             description: document.getElementById('description').value,
             amount: document.getElementById('amount').value,
@@ -444,16 +551,40 @@
             endDate: endDate || null
         };
 
-        transactions.push(newTx);
+        if (editingIndex === -1) {
+            // Crear movimiento nuevo
+            transactions.push(dataTx);
+        } else {
+            // Modificar movimiento existente
+            transactions[editingIndex] = dataTx;
+            editingIndex = -1; // Resetear bandera de edición
+            
+            // Reestablecer aspectos visuales normales
+            formTitle.innerText = "2. Registrar Movimiento";
+            btnSubmit.innerText = "Guardar Movimiento";
+            btnSubmit.style.backgroundColor = "var(--primary)";
+            btnCancelEdit.style.display = "none";
+        }
+
         updateUI();
         form.reset();
         initSetup();
-        
-        goToPage(1); // Regresa directo al panel visual de control
+        goToPage(1); // Va directo al balance general para confirmar datos
     });
 
     function deleteTransaction(index) {
-        if(confirm('¿Eliminar este registro del historial?')) {
+        const tx = transactions[index];
+        let msg = `¿Seguro que quieres eliminar "${tx.description}"?`;
+        
+        if (tx.endDate) {
+            msg += "\n\nNota: Al ser un gasto recurrente, desaparecerá también de los meses futuros vinculados.";
+        }
+
+        if(confirm(msg)) {
+            // Si estábamos editando justo este elemento y se borra, cancelamos el estado de edición
+            if (editingIndex === index) {
+                cancelEdit();
+            }
             transactions.splice(index, 1);
             updateUI();
         }
