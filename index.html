@@ -3,170 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Técnico Danfoss - VLT & VACON</title>
+    <title>Presupuesto sin Límites - Basado en Ingresos</title>
     <style>
         :root {
-            --red-danfoss: #d71920;
-            --blue-vacon: #00458b;
-            --dark: #2d2d2d;
-            --light-bg: #f4f7f6;
+            --primary: #4f46e5;
+            --income: #10b981;
+            --expense: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --border: #e5e7eb;
         }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--light-bg); 
-            margin: 0; 
-            color: var(--dark); 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
+
+        body {
+            background-color: #f9fafb;
+            color: var(--dark);
+            padding: 15px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin: 10px 0 15px 0;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        /* CONTROL DE MES */
+        .month-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .month-control button {
+            background: var(--light);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .month-control button:hover { background: #e5e7eb; }
+
+        .month-control input[type="month"] {
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            outline: none;
+        }
+
+        /* NAVEGACIÓN REESCRITA (3 PÁGINAS) */
+        .navbar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 12px 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            background-color: #eef2ff;
+        }
+
+        /* VISTAS */
+        .page {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @media (min-width: 600px) { .page { padding: 30px; } }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 8px;
+        }
+
+        /* FORMULARIOS */
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button.btn-block {
+            width: 100%; background-color: var(--primary); color: white; padding: 14px;
+            border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        button.btn-block:hover { background-color: #4338ca; }
+
+        /* TARJETAS RESUMEN */
+        .quick-summary { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 25px; }
+        @media (min-width: 550px) { .quick-summary { grid-template-columns: repeat(3, 1fr); } }
+        .mini-card { background: var(--light); padding: 16px; border-radius: 10px; text-align: center; }
+        .mini-card h4 { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; }
+        .mini-card p { font-size: 1.25rem; font-weight: bold; margin-top: 4px; }
+
+        /* BARRAS DE DISTRIBUCIÓN DE INGRESOS */
+        .budget-progress-item { margin-bottom: 18px; }
+        .budget-info { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; gap: 10px; }
+        .budget-bar-bg { background-color: #e5e7eb; height: 12px; border-radius: 10px; overflow: hidden; }
+        .budget-bar-fill { height: 100%; width: 0%; transition: width 0.4s; }
+
+        /* TABLAS RESILIENTES */
+        .table-wrapper { overflow-x: auto; margin-top: 15px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background-color: #f8fafc; color: #4b5563; font-weight: 600; }
         
-        header { 
-            background: white; 
-            padding: 30px; 
-            text-align: center; 
-            border-bottom: 4px solid var(--red-danfoss); 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+        .badge { padding: 3px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; display: inline-block; }
+        .badge.ingreso { background-color: #d1fae5; color: #065f46; }
+        .badge.gasto { background-color: #fee2e2; color: #991b1b; }
+        .badge.recurrente { background-color: #e0f2fe; color: #0369a1; margin-left: 4px; }
 
-        /* Navegación Fija */
-        .nav-tabs { 
-            display: flex; 
-            background: var(--dark); 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-        }
-        .tab { 
-            flex: 1; padding: 20px; text-align: center; color: white; 
-            cursor: pointer; font-weight: bold; transition: 0.3s; border: none; background: none;
-            font-size: 16px; text-transform: uppercase;
-        }
-        .tab:hover { background: #444; }
-        .tab.active-vlt { background: var(--red-danfoss); }
-        .tab.active-vacon { background: var(--blue-vacon); }
-
-        /* Buscador */
-        .search-box { padding: 25px; text-align: center; background: white; }
-        #buscador { 
-            width: 90%; max-width: 600px; padding: 15px 25px; 
-            border-radius: 30px; border: 2px solid #ddd; outline: none; font-size: 16px;
-        }
-
-        /* Grid de Tarjetas */
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-
-        .card { 
-            background: white; border-radius: 12px; overflow: hidden; 
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05); transition: 0.3s;
-            display: flex; flex-direction: column; height: 100%;
-            border: 1px solid #eee;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-        
-        .card-header { padding: 15px 20px; color: white; font-weight: bold; font-size: 13px; }
-        .vlt-head { background: var(--red-danfoss); }
-        .vacon-head { background: var(--blue-vacon); }
-
-        .card-body { padding: 20px; flex-grow: 1; }
-        .card-body h3 { margin: 0 0 10px 0; font-size: 19px; color: #111; }
-        .card-body p { margin: 5px 0; color: #555; font-size: 14px; line-height: 1.5; }
-        
-        .tag { 
-            display: inline-block; padding: 4px 12px; background: #f0f0f0; 
-            border-radius: 15px; font-size: 11px; margin-top: 15px; font-weight: bold; color: #666;
-        }
-
-        /* Botón de descarga - El enlace directo */
-        .btn-download {
-            margin: 20px; padding: 14px; text-align: center;
-            background: var(--dark); color: white; text-decoration: none;
-            border-radius: 6px; font-weight: bold; transition: 0.3s;
-            font-size: 14px;
-        }
-        .btn-download:hover { background: #000; }
-
-        @media (max-width: 600px) { .nav-tabs { flex-direction: row; font-size: 12px; } .tab { padding: 15px 5px; } }
+        .btn-delete { background: transparent; color: var(--expense); border: none; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Repositorio de Manuales Danfoss</h1>
-</header>
-
-<nav class="nav-tabs">
-    <button id="btn-vlt" class="tab active-vlt" onclick="setMarca('VLT')">VLT® Drives</button>
-    <button id="btn-vacon" class="tab" onclick="setMarca('VACON')">VACON® Drives</button>
-</nav>
-
-<div class="search-box">
-    <input type="text" id="buscador" placeholder="Buscar modelo (ej: FC 302, 102, NXP...)" onkeyup="render()">
-</div>
-
 <div class="container">
-    <div id="main-grid" class="grid"></div>
+    <header>
+        <h1>Presupuesto Inteligente</h1>
+    </header>
+
+    <div class="month-control">
+        <button onclick="moveMonth(-1)">◀ Ant</button>
+        <input type="month" id="global-month" onchange="handleMonthChange(this.value)">
+        <button onclick="moveMonth(1)">Sig ▶</button>
+    </div>
+
+    <nav class="navbar">
+        <button class="nav-btn active" id="btn-page1" onclick="goToPage(1)">1. Estado</button>
+        <button class="nav-btn" id="btn-page2" onclick="goToPage(2)">2. Añadir</button>
+        <button class="nav-btn" id="btn-page3" onclick="goToPage(3)">3. Historial</button>
+    </nav>
+
+    <div id="page1" class="page active">
+        <h2>Balance General del Mes</h2>
+        <div class="quick-summary">
+            <div class="mini-card">
+                <h4>Tus Ingresos (Límite)</h4>
+                <p id="sum-income" style="color: var(--income);">0.00 €</p>
+            </div>
+            <div class="mini-card">
+                <h4>Total Gastado</h4>
+                <p id="sum-spent" style="color: var(--expense);">0.00 €</p>
+            </div>
+            <div class="mini-card">
+                <h4>Disponible Real</h4>
+                <p id="sum-remaining">0.00 €</p>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1rem; margin-bottom: 12px; color: #4b5563;">Consumo de Ingresos por Categoría:</h3>
+        <div id="budget-progress-container"></div>
+        
+        <button class="btn-block" onclick="goToPage(2)" style="margin-top: 15px;">Añadir Movimiento +</button>
+    </div>
+
+    <div id="page2" class="page">
+        <h2>2. Registrar Movimiento</h2>
+        <form id="finance-form">
+            <div class="form-group">
+                <label for="type">Tipo de transacción</label>
+                <select id="type" required>
+                    <option value="gasto">Gasto (Resta de tus ingresos totales)</option>
+                    <option value="ingreso">Ingreso (Aumenta tu límite disponible)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <input type="text" id="description" placeholder="Ej. Nómina, Compra Súper, Alquiler" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Monto (€)</label>
+                <input type="number" id="amount" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Categoría (Solo para gastos)</label>
+                <select id="category" required></select>
+            </div>
+            <div class="form-group">
+                <label for="date">Fecha de Inicio / Pago</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group" style="background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px dashed #bfdbfe;">
+                <label for="end-date" style="color: #1e40af;">🔄 Fin de Pagos (Opcional)</label>
+                <input type="date" id="end-date">
+                <small style="color: #1e3a8a; display:block; margin-top: 4px;">Si este gasto se repite, pon la fecha límite y se copiará solo mes a mes.</small>
+            </div>
+            <button type="submit" class="btn-block">Guardar Movimiento</button>
+        </form>
+    </div>
+
+    <div id="page3" class="page">
+        <h2>3. Historial de este Mes</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Descripción</th>
+                        <th style="width: 20%;">Categoría</th>
+                        <th style="width: 15%;">Tipo</th>
+                        <th style="width: 15%;">Monto</th>
+                        <th style="width: 10%;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-list"></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
-    // DATOS CON ENLACES DIRECTOS (Sin carpetas locales para evitar error 404)
-    const variadores = [
-        // --- GAMA VLT ---
-        { id: "FC51", marca: "VLT", nombre: "Micro Drive FC 51", serie: "M1-M5", desc: "Compacto, confiable y fácil de configurar.", manual: "https://inprocess.com.pe/datasheets/variadores-de-velocidad/FC51_Guia_programacion.pdf" },
-        { id: "FC280", marca: "VLT", nombre: "Midi Drive FC 280", serie: "M1-M5", desc: "El sustituto moderno del VLT 2800.", manual: "https://assets.danfoss.com/documents/270803/AQ275647333269es-000801.pdf" },
-        { id: "FC302", marca: "VLT", nombre: "AutomationDrive FC 302", serie: "A-F", desc: "Alto rendimiento para cualquier aplicación industrial.", manual: "https://files.danfoss.com/download/Drives/MG33AT05.pdf" },
-        { id: "FC102", marca: "VLT", nombre: "HVAC Drive FC 102", serie: "A-F", desc: "Optimizado para ventilación y aire acondicionado.", manual: "https://files.danfoss.com/download/Drives/DrivesMG11CE05.pdf" },
-        { id: "FC202", marca: "VLT", nombre: "AQUA Drive FC 202", serie: "A-F", desc: "Especialista en tratamiento de agua y bombeo.", manual: "https://files.danfoss.com/download/Drives/DrivesMG21A505.pdf" },
-        { id: "MCD 600", marca: "VLT", nombre: "MCD 600", serie: "A-F", desc: "Arrancador.", manual: "https://assets.danfoss.com/documents/274868/AQ262141844215es-000401.pdf" },
-        { id: "MCD 202", marca: "VLT", nombre: "MCD 202", serie: "A-F", desc: "Arrancador.", manual: "https://assets.danfoss.com/documents/276741/AQ35792881056301-000101.pdf" },
+    const categories = ["Alimentación", "Vivienda", "Educación", "Entretenimiento", "Suscripciones", "Otros"];
 
-        // --- GAMA VACON ---
-        { id: "V100IND", marca: "VACON", nombre: "VACON® 100 INDUSTRIAL", serie: "MR4-MR12", desc: "Versatilidad total para la industria pesada.", manual: "https://www.setefer.com/wp-content/uploads/Vacon-100-Industrial-Application-Manual-DPD01036I-ES.pdf?srsltid=AfmBOoogZ2u_hrFNmm1BAk1osUDoe705a4FkiXPu1Bn5sKU0sRrOm98A" },
-        { id: "V100FLOW", marca: "VACON", nombre: "VACON® 100 FLOW", serie: "MR4-MR12", desc: "Control de flujo y funciones multipompa.", manual: "https://www.motronic.es/upfiles/productes_tenda_img/files/135u1943__vacon_100_flow__3x400vac__ip21_55_kw-es_72595.pdf" },
-        { id: "V20", marca: "VACON", nombre: "VACON® 20", serie: "MI1-MI5", desc: "Potencia compacta con PLC incorporado.", manual: "https://assets.danfoss.com/documents/270885/AQ361180907730es-000201.pdf" },
-        { id: "V20 PFC", marca: "VACON", nombre: "VACON® 20 PFC", serie: "MI1-MI5", desc: "Potencia compacta con PLC incorporado.", manual: "https://www.rpmecatronica.com/system/storage/download/V20PFC%20-%20Guía%20rápida%20v2.pdf?key=ZxSUMEdvwrcalkSFFAFtxsd0k0VGvtQp" },
-        { id: "NXP", marca: "VACON", nombre: "VACON® NXP Air Cooled", serie: "FR4-FR14", desc: "Control de alta precisión para aplicaciones exigentes.", manual: "https://ecommerce-uk.interpuls.com/documenti/999%20Obsolete%20Products/Inverter%20NXS/9001279%20-%20MANUALE%20INVERTER%20VACON%20COMPLETO%20-%20ES%20-%20R01.pdf" }
-    ];
+    let currentYearMonth = new Date().toISOString().substring(0, 7);
+    let transactions = JSON.parse(localStorage.getItem('nolimits_transactions')) || [];
 
-    let marcaActual = 'VLT';
+    const form = document.getElementById('finance-form');
+    const categorySelect = document.getElementById('category');
+    const budgetProgressContainer = document.getElementById('budget-progress-container');
+    const transactionList = document.getElementById('transaction-list');
+    const monthPicker = document.getElementById('global-month');
 
-    function setMarca(m) {
-        marcaActual = m;
-        // Actualizar visual de pestañas
-        document.getElementById('btn-vlt').className = `tab ${m === 'VLT' ? 'active-vlt' : ''}`;
-        document.getElementById('btn-vacon').className = `tab ${m === 'VACON' ? 'active-vacon' : ''}`;
-        render();
+    function goToPage(pageNumber) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`page${pageNumber}`).classList.add('active');
+        document.getElementById(`btn-page${pageNumber}`).classList.add('active');
+        window.scrollTo(0, 0);
     }
 
-    function render() {
-        const query = document.getElementById('buscador').value.toLowerCase();
-        const grid = document.getElementById('main-grid');
+    function handleMonthChange(newVal) {
+        if(!newVal) return;
+        currentYearMonth = newVal;
+        initSetup();
+        updateUI();
+    }
+
+    function moveMonth(direction) {
+        let [year, month] = currentYearMonth.split('-').map(Number);
+        month += direction;
+        if (month > 12) { month = 1; year += 1; }
+        if (month < 1) { month = 12; year -= 1; }
+        currentYearMonth = `${year}-${String(month).padStart(2, '0')}`;
+        monthPicker.value = currentYearMonth;
+        initSetup();
+        updateUI();
+    }
+
+    function initSetup() {
+        monthPicker.value = currentYearMonth;
+        categorySelect.innerHTML = '';
+
+        categories.forEach(cat => {
+            let option = document.createElement('option');
+            option.value = cat; option.innerText = cat;
+            categorySelect.appendChild(option);
+        });
+
+        const today = new Date();
+        const currentDayStr = String(today.getDate()).padStart(2, '0');
+        document.getElementById('date').value = `${currentYearMonth}-${currentDayStr}`;
+    }
+
+    function isTransactionActiveInMonth(t, targetMonth) {
+        const startMonth = t.date.substring(0, 7);
+        if (!t.endDate) return startMonth === targetMonth;
+        const endMonth = t.endDate.substring(0, 7);
+        return targetMonth >= startMonth && targetMonth <= endMonth;
+    }
+
+    function updateUI() {
+        transactionList.innerHTML = '';
+        let spentByCategory = {};
+        categories.forEach(cat => spentByCategory[cat] = 0);
+
+        let totalIncome = 0;
+        let totalSpent = 0;
+
+        transactions.forEach((t, index) => {
+            if (isTransactionActiveInMonth(t, currentYearMonth)) {
+                const amount = parseFloat(t.amount);
+                const isIncome = t.type === 'ingreso';
+                const isRecurring = t.endDate ? true : false;
+                const isFromPreviousMonth = t.date.substring(0, 7) !== currentYearMonth;
+
+                if (isIncome) {
+                    totalIncome += amount;
+                } else {
+                    totalSpent += amount;
+                    if (spentByCategory[t.category] !== undefined) {
+                        spentByCategory[t.category] += amount;
+                    }
+                }
+
+                const row = document.createElement('tr');
+                if(isFromPreviousMonth) row.style.backgroundColor = "#fdfdfd";
+
+                row.innerHTML = `
+                    <td>
+                        <strong>${t.description}</strong>
+                        ${isRecurring ? '<span class="badge recurrente">🔄 Recurrente</span>' : ''}
+                        <br><small style="color:#6b7280;">Inicio: ${t.date} ${t.endDate ? `| Fin: ${t.endDate}` : ''}</small>
+                    </td>
+                    <td>${isIncome ? '<span style="color:#9ca3af;">-</span>' : t.category}</td>
+                    <td><span class="badge ${t.type}">${t.type.toUpperCase()}</span></td>
+                    <td style="color: ${isIncome ? 'var(--income)' : 'var(--expense)'}; font-weight:700; white-space: nowrap;">
+                        ${isIncome ? '+' : '-'}${amount.toFixed(2)} €
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-delete" onclick="deleteTransaction(${index})">🗑️</button>
+                    </td>
+                `;
+                transactionList.appendChild(row);
+            }
+        });
+
+        let remainingBudget = totalIncome - totalSpent;
+        document.getElementById('sum-income').innerText = `${totalIncome.toFixed(2)} €`;
+        document.getElementById('sum-spent').innerText = `${totalSpent.toFixed(2)} €`;
+        document.getElementById('sum-remaining').innerText = `${remainingBudget.toFixed(2)} €`;
+
+        const remainingText = document.getElementById('sum-remaining');
+        remainingText.style.color = remainingBudget < 0 ? 'var(--expense)' : 'var(--income)';
+
+        // RENDERIZAR BARRAS EN BASE A LOS INGRESOS REALES TOTALES
+        budgetProgressContainer.innerHTML = '';
+
+        categories.forEach(cat => {
+            const spent = spentByCategory[cat] || 0;
+            // El porcentaje representa cuánto ocupa este gasto respecto al total de ingresos del mes
+            const percent = totalIncome > 0 ? Math.min((spent / totalIncome) * 100, 100) : 0;
+            const globalPercentText = totalIncome > 0 ? ((spent / totalIncome) * 100).toFixed(1) : "0.0";
+            
+            // La barra cambia a color advertencia/rojo solo si los gastos globales están al límite
+            let barColor = 'var(--primary)';
+            if (remainingBudget < 0) {
+                barColor = 'var(--expense)';
+            } else if (remainingBudget < (totalIncome * 0.15)) {
+                barColor = 'var(--warning)';
+            }
+
+            const item = document.createElement('div');
+            item.className = 'budget-progress-item';
+            item.innerHTML = `
+                <div class="budget-info">
+                    <span><strong>${cat}</strong></span>
+                    <span style="font-weight: 600;">${spent.toFixed(2)} € <small style="color:#6b7280;">(${globalPercentText}% del ingreso)</small></span>
+                </div>
+                <div class="budget-bar-bg">
+                    <div class="budget-bar-fill" style="width: ${percent}%; background-color: ${barColor};"></div>
+                </div>
+            `;
+            budgetProgressContainer.appendChild(item);
+        });
+
+        localStorage.setItem('nolimits_transactions', JSON.stringify(transactions));
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const startDate = document.getElementById('date').value;
+        const endDate = document.getElementById('end-date').value;
+
+        if (endDate && endDate < startDate) {
+            alert('La fecha de finalización no puede ser anterior a la de inicio.');
+            return;
+        }
+
+        const newTx = {
+            type: document.getElementById('type').value,
+            description: document.getElementById('description').value,
+            amount: document.getElementById('amount').value,
+            category: document.getElementById('category').value,
+            date: startDate,
+            endDate: endDate || null
+        };
+
+        transactions.push(newTx);
+        updateUI();
+        form.reset();
+        initSetup();
         
-        // Filtro por marca y texto
-        const filtrados = variadores.filter(v => 
-            v.marca === marcaActual && 
-            (v.nombre.toLowerCase().includes(query) || v.desc.toLowerCase().includes(query))
-        );
+        goToPage(1); // Regresa directo al panel visual de control
+    });
 
-        // Generar las tarjetas. Importante: href="${v.manual}" sin prefijos.
-        grid.innerHTML = filtrados.map(v => `
-            <div class="card">
-                <div class="card-header ${v.marca === 'VLT' ? 'vlt-head' : 'vacon-head'}">
-                    ${v.marca} DRIVE
-                </div>
-                <div class="card-body">
-                    <h3>${v.nombre}</h3>
-                    <p>${v.desc}</p>
-                    <span class="tag">Frames: ${v.serie}</span>
-                </div>
-                <a href="${v.manual}" class="btn-download" target="_blank" rel="noopener noreferrer">
-                    📄 DESCARGAR PDF OFICIAL
-                </a>
-            </div>
-        `).join('');
+    function deleteTransaction(index) {
+        if(confirm('¿Eliminar este registro del historial?')) {
+            transactions.splice(index, 1);
+            updateUI();
+        }
     }
 
-    // Iniciar al cargar la página
-    window.onload = render;
+    monthPicker.value = currentYearMonth;
+    initSetup();
+    updateUI();
 </script>
 
 </body>
