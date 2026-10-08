@@ -188,7 +188,7 @@ function cobrar(){
   const nombre=$('sel-cli').value.trim();
   let nuevo=false;
   if(nombre&&!db.clients.some(x=>x.nom.toLowerCase()===nombre.toLowerCase())){db.clients.push({id:uid(),nom:nombre,tel:'',mail:'',dir:''});nuevo=true}
-  const items=cart.map(i=>{const p=db.products.find(x=>x.id===i.id);return{nom:p.nom,pre:p.pre,qty:i.qty}});
+  const items=cart.map(i=>{const p=db.products.find(x=>x.id===i.id);return{nom:p.nom,pre:p.pre,qty:i.qty,cod:p.cod}});
   db.sales.unshift({id:uid(),fecha:new Date().toISOString(),cliente:nombre||'Consumidor final',items,total:total(),ben:ben(),tel:(db.clients.find(x=>x.nom.toLowerCase()===nombre.toLowerCase())||{}).tel||''});
   cart.forEach(i=>{const p=db.products.find(x=>x.id===i.id);if(hasStk(p))p.stk=String(Number(p.stk)-i.qty)});
   const t=total();cart=[];$('sel-cli').value='';persist();renderCaja();flash('🎉 ¡Venta hecha! Total: '+money(t)+(nuevo?' · Cliente nuevo guardado':''));scrollTo(0,0);
@@ -246,7 +246,7 @@ function render(){
   $('v-hoy').textContent=money(sh.reduce((a,s)=>a+s.total,0));$('v-ben').textContent=money(sh.reduce((a,s)=>a+(s.ben||0),0));
   $('v-list').innerHTML=db.sales.length?db.sales.map(s=>`<div class="item"><div><b>${esc(s.cliente)}</b>${(()=>{const t=s.tel||(db.clients.find(c=>c.nom.toLowerCase()===s.cliente.toLowerCase())||{}).tel;return t?'<small>📞 '+esc(t)+'</small>':''})()}
     <small>${new Date(s.fecha).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</small>
-    <small>${s.items.map(i=>i.qty+'× '+esc(i.nom)).join(', ')}</small>${s.ben!=null?'<small>Beneficio: '+money(s.ben)+'</small>':''}<div><button class="ent ${s.ent?'ok':''}" onclick="toggleEnt('${s.id}')">${s.ent?'✅ Entregado':'⏳ Sin entregar'}</button></div></div><div class="price">${money(s.total)}</div><div class="acts"><button class="d" onclick="delSale('${s.id}')">Borrar</button></div></div>`).join(''):'<div class="empty">Todavía no hay ventas</div>';
+    ${s.items.map(i=>{const c=i.cod||(db.products.find(p=>p.nom===i.nom)||{}).cod;return '<small>'+i.qty+'× '+(c?'Ref '+esc(c)+' · ':'')+esc(i.nom)+'</small>'}).join('')}${s.ben!=null?'<small>Beneficio: '+money(s.ben)+'</small>':''}<div><button class="ent ${s.ent?'ok':''}" onclick="toggleEnt('${s.id}')">${s.ent?'✅ Entregado':'⏳ Sin entregar'}</button></div></div><div class="price">${money(s.total)}</div><div class="acts"><button class="d" onclick="delSale('${s.id}')">Borrar</button></div></div>`).join(''):'<div class="empty">Todavía no hay ventas</div>';
 }
 
 /* ---------- CATÁLOGO CANARIAS 2026 ---------- */
