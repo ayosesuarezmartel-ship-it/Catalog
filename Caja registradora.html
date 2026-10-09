@@ -1,0 +1,593 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caja registradora</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1c2430;--mut:#667085;--bd:#e2e5ea;--ac:#2563eb;--ac2:#fff;--dg:#dc2626;--ok:#16a34a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1b212b;--tx:#e8ecf1;--mut:#98a2b3;--bd:#2b3340;--ac:#5b8def;--dg:#f87171;--ok:#4ade80}}
+:root[data-theme="dark"]{--bg:#12161c;--card:#1b212b;--tx:#e8ecf1;--mut:#98a2b3;--bd:#2b3340;--ac:#5b8def;--dg:#f87171;--ok:#4ade80}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+.wrap{max-width:760px;margin:0 auto;padding:12px 12px 24px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-size:.95rem;cursor:pointer}
+.tabs button.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+h2{font-size:1rem;margin:0 0 8px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
+label{display:block;font-size:.8rem;color:var(--mut);margin-bottom:3px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:1rem}
+.btn{padding:10px 16px;border:0;border-radius:8px;background:var(--ac);color:var(--ac2);font-size:1rem;cursor:pointer;margin-top:10px}
+.btn.s{background:transparent;color:var(--mut);border:1px solid var(--bd);margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.prod{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px;text-align:left;cursor:pointer;font-size:.95rem}
+.prod:active{transform:scale(.97)}
+.prod b{display:block;margin-bottom:4px}.prod span{color:var(--ac);font-weight:700}.prod small{display:block;color:var(--mut)}
+.prod:disabled{opacity:.4}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.item:last-child{border-bottom:0}
+.item small{color:var(--mut);display:block}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:32px;height:32px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:1.1rem;cursor:pointer}
+.acts button{background:none;border:0;color:var(--ac);font-size:.9rem;cursor:pointer;padding:6px}
+.acts .d{color:var(--dg)}
+.price{font-weight:600;white-space:nowrap}
+.total{display:flex;justify-content:space-between;font-size:1.5rem;font-weight:700;padding-top:10px}
+.pay{width:100%;font-size:1.15rem;padding:14px;background:var(--ok);margin-top:10px}
+.empty{color:var(--mut);text-align:center;padding:14px 0}
+.msg{background:var(--ok);color:#fff;padding:10px;border-radius:8px;margin-bottom:12px;display:none;text-align:center}
+body{font-size:18px}
+input,select{padding:14px;font-size:1.1rem}
+.btn{padding:14px 22px;font-size:1.1rem;border-radius:12px}
+.tabs button{padding:14px 2px;font-size:1rem;border-radius:12px}
+h2{font-size:1.15rem;display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.n{background:var(--ac);color:var(--ac2);width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.grid{grid-template-columns:1fr}
+.prod{padding:16px;font-size:1.1rem;border:2px solid var(--ac);border-radius:14px}
+.prod b{font-size:1.15rem}.prod span{font-size:1.4rem}
+.qty button{width:44px;height:44px;font-size:1.4rem;border-radius:12px}
+.total{font-size:2.2rem}
+.pay{font-size:1.5rem;padding:20px}
+.acts button{font-size:1rem;padding:10px}
+.msg{font-size:1.2rem;padding:16px}
+.ent{margin-top:6px;padding:8px 14px;border-radius:20px;border:2px solid var(--bd);background:var(--bg);color:var(--mut);font-size:1rem;cursor:pointer}.ent.ok{border-color:var(--ok);color:var(--ok);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="msg" id="msg"></div>
+  <div class="tabs">
+    <button id="t-caja" class="on" onclick="tab('caja')">🧾 Caja</button>
+    <button id="t-c" onclick="tab('c')">👥 Clientes</button>
+    <button id="t-p" onclick="tab('p')">📦 Productos</button>
+    <button id="t-v" onclick="tab('v')">📊 Ventas</button>
+  </div>
+
+  <!-- CAJA -->
+  <div id="v-caja">
+    <div class="card">
+      <h2><span class="n">1</span> ¿Quién compra?</h2>
+      <input id="sel-cli" list="cli-list" placeholder="Escribe el nombre (si no lo sabes, déjalo vacío)" autocomplete="off"><datalist id="cli-list"></datalist>
+    </div>
+    <div class="card">
+      <h2><span class="n">2</span> Escribe el número del producto</h2>
+      <input id="q-caja" placeholder="🔍 Número, por ejemplo 302" inputmode="numeric" oninput="renderCaja()">
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="card">
+      <h2><span class="n">3</span> Lo que se lleva</h2>
+      <div id="cart"></div>
+      <div class="total"><span>Total</span><span id="tot">0,00 €</span></div>
+      <div style="display:flex;justify-content:space-between;color:var(--mut)"><span>Beneficio</span><span id="ben">0,00 €</span></div>
+      <button class="btn pay" onclick="pedirCobro()">✅ Cobrar</button>
+      <button class="btn s" style="width:100%;margin:8px 0 0" onclick="cart=[];renderCaja()">Empezar de nuevo</button>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div id="v-c" style="display:none">
+    <div class="card">
+      <div class="row">
+        <div><label>Nombre *</label><input id="c-nom"></div>
+        <div><label>Teléfono</label><input id="c-tel" type="tel"></div>
+        <div><label>Email</label><input id="c-mail" type="email"></div>
+        <div><label>Dirección</label><input id="c-dir"></div>
+      </div>
+      <button class="btn" onclick="saveC()" id="c-btn">Agregar cliente</button>
+      <button class="btn s" id="c-x" onclick="resetC()" style="display:none">Cancelar</button>
+    </div>
+    <div class="card" id="c-list"></div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div id="v-p" style="display:none">
+    <div class="card">
+      <div class="row">
+        <div><label>Producto *</label><input id="p-nom"></div>
+        <div><label>Precio *</label><input id="p-pre" type="number" min="0" step="0.01"></div>
+        <div><label>Código / SKU</label><input id="p-cod"></div>
+        <div><label>Costo</label><input id="p-cost" type="number" min="0" step="0.01"></div>
+        <div><label>Stock (vacío = sin control)</label><input id="p-stk" type="number" min="0" step="1"></div>
+      </div>
+      <button class="btn" onclick="saveP()" id="p-btn">Agregar producto</button>
+      <button class="btn s" id="p-x" onclick="resetP()" style="display:none">Cancelar</button>
+    </div>
+    <input id="p-q" placeholder="🔍 Buscar producto o referencia..." oninput="render()" style="margin-bottom:10px">
+    <div class="card" id="p-list"></div>
+  </div>
+
+  <!-- VENTAS -->
+  <div id="v-v" style="display:none">
+    <div class="card"><h2>Ventas de hoy</h2><div class="total" style="padding:0"><span id="v-n"></span><span id="v-hoy"></span></div>
+      <div style="display:flex;justify-content:space-between;color:var(--mut);margin-top:4px"><span>Beneficio de hoy</span><span id="v-ben"></span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1.25rem;color:var(--ok);margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)"><span>💰 Beneficio total</span><span id="v-bent"></span></div>
+      <div style="display:flex;justify-content:space-between;color:var(--mut);margin-top:4px"><span>Pendientes de entregar</span><span id="v-pend"></span></div>
+      <button class="btn s" style="margin:10px 0 0;color:var(--dg)" onclick="delAll()">Borrar todas las ventas</button></div>
+    <div class="card" id="v-list"></div>
+  </div>
+</div>
+
+<div id="ask" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;z-index:10">
+  <div class="card" style="max-width:320px;width:100%;margin:0;text-align:center">
+    <p id="ask-t" style="margin:4px 0 8px;font-size:1.05rem"></p>
+    <button class="btn" id="ask-ok" style="background:var(--dg)" onclick="askOk(true)">Borrar</button>
+    <button class="btn s" onclick="askOk(false)">Cancelar</button>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let db={clients:[],products:[],sales:[]},editC=null,editP=null,cart=[];
+try{const s=localStorage.getItem('registro_db');if(s)db=Object.assign(db,JSON.parse(s))}catch(e){}
+function persist(){try{localStorage.setItem('registro_db',JSON.stringify(db))}catch(e){}}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Number(n).toLocaleString('es',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const hasStk=p=>p.stk!==''&&p.stk!=null&&!isNaN(Number(p.stk));
+
+function tab(t){
+  for(const k of ['caja','c','p','v']){$('v-'+k).style.display=k===t?'':'none';$('t-'+k).classList.toggle('on',k===t)}
+  render();
+}
+function flash(t){const m=$('msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',2500)}
+
+/* ---------- CAJA ---------- */
+function inCart(id){const x=cart.find(i=>i.id===id);return x?x.qty:0}
+function add(id){
+  const p=db.products.find(x=>x.id===id);if(!p)return;
+  if(hasStk(p)&&inCart(id)>=Number(p.stk))return;
+  const x=cart.find(i=>i.id===id);x?x.qty++:cart.push({id,qty:1});$('q-caja').value='';renderCaja();
+}
+function chg(id,d){
+  const x=cart.find(i=>i.id===id),p=db.products.find(y=>y.id===id);if(!x)return;
+  if(d>0&&hasStk(p)&&x.qty>=Number(p.stk))return;
+  x.qty+=d;if(x.qty<=0)cart=cart.filter(i=>i.id!==id);renderCaja();
+}
+function ben(){return cart.reduce((s,i)=>{const p=db.products.find(x=>x.id===i.id);return s+(p&&p.cost!==''&&p.cost!=null?(p.pre-p.cost)*i.qty:0)},0)}
+const byRef=(a,b)=>(parseFloat(a.cod)||1e9)-(parseFloat(b.cod)||1e9)||a.nom.localeCompare(b.nom);
+function total(){return cart.reduce((s,i)=>{const p=db.products.find(x=>x.id===i.id);return s+(p?p.pre*i.qty:0)},0)}
+function renderCaja(){
+  $('cli-list').innerHTML=db.clients.map(c=>`<option value="${esc(c.nom)}"></option>`).join('');
+  const q=$('q-caja').value.trim().toLowerCase();
+  const ps=q?db.products.filter(p=>String(p.cod).toLowerCase().includes(q)).sort(byRef):[];
+  $('grid').innerHTML=ps.length?ps.map(p=>{
+    const left=hasStk(p)?Number(p.stk)-inCart(p.id):null;
+    return `<button class="prod" ${left!==null&&left<=0?'disabled':''} onclick="add('${p.id}')"><small>Ref ${esc(p.cod)}</small><b>${esc(p.nom)}</b><span>${money(p.pre)}</span>${left!==null?`<small>Stock: ${left}</small>`:''}</button>`}).join('')
+    :'<div class="empty" style="grid-column:1/-1">'+(q?'No hay productos con esa referencia':'Escribe el número del producto arriba 👆')+'</div>';
+  $('cart').innerHTML=cart.length?cart.map(i=>{const p=db.products.find(x=>x.id===i.id);
+    return `<div class="item"><div><b>${esc(p.nom)}</b><small>${money(p.pre)} c/u</small></div>
+    <div class="qty"><button onclick="chg('${i.id}',-1)">−</button><b>${i.qty}</b><button onclick="chg('${i.id}',1)">+</button></div>
+    <div class="price">${money(p.pre*i.qty)}</div></div>`}).join(''):'<div class="empty">Aún no hay nada. Escribe un número arriba y toca el producto.</div>';
+  $('tot').textContent=money(total());$('ben').textContent=money(ben());
+}
+function cobrar(){
+  if(!cart.length){flash('Primero añade algún producto');return}
+  const nombre=$('sel-cli').value.trim();
+  let nuevo=false;
+  if(nombre&&!db.clients.some(x=>x.nom.toLowerCase()===nombre.toLowerCase())){db.clients.push({id:uid(),nom:nombre,tel:'',mail:'',dir:''});nuevo=true}
+  const items=cart.map(i=>{const p=db.products.find(x=>x.id===i.id);return{nom:p.nom,pre:p.pre,qty:i.qty,cod:p.cod}});
+  db.sales.unshift({id:uid(),fecha:new Date().toISOString(),cliente:nombre||'Consumidor final',items,total:total(),ben:ben(),tel:(db.clients.find(x=>x.nom.toLowerCase()===nombre.toLowerCase())||{}).tel||''});
+  cart.forEach(i=>{const p=db.products.find(x=>x.id===i.id);if(hasStk(p))p.stk=String(Number(p.stk)-i.qty)});
+  const t=total();cart=[];$('sel-cli').value='';persist();renderCaja();flash('🎉 ¡Venta hecha! Total: '+money(t)+(nuevo?' · Cliente nuevo guardado':''));scrollTo(0,0);
+}
+
+/* ---------- CLIENTES ---------- */
+function saveC(){
+  const nom=$('c-nom').value.trim();if(!nom){$('c-nom').focus();return}
+  const o={nom,tel:$('c-tel').value.trim(),mail:$('c-mail').value.trim(),dir:$('c-dir').value.trim()};
+  if(editC)Object.assign(db.clients.find(x=>x.id===editC),o);else db.clients.push({id:uid(),...o});
+  persist();resetC();
+}
+function resetC(){editC=null;['nom','tel','mail','dir'].forEach(k=>$('c-'+k).value='');
+  $('c-btn').textContent='Agregar cliente';$('c-x').style.display='none';render()}
+function editClient(id){const c=db.clients.find(x=>x.id===id);editC=id;
+  $('c-nom').value=c.nom;$('c-tel').value=c.tel;$('c-mail').value=c.mail;$('c-dir').value=c.dir;
+  $('c-btn').textContent='Guardar cambios';$('c-x').style.display='';scrollTo(0,0)}
+function delClient(id){ask('¿Eliminar este cliente?',()=>{db.clients=db.clients.filter(x=>x.id!==id);persist();render()})}
+
+/* ---------- PRODUCTOS ---------- */
+function saveP(){
+  const nom=$('p-nom').value.trim(),pre=parseFloat($('p-pre').value);
+  if(!nom){$('p-nom').focus();return}
+  if(isNaN(pre)||pre<0){$('p-pre').focus();return}
+  const o={nom,pre,cod:$('p-cod').value.trim(),stk:$('p-stk').value,cost:$('p-cost').value};
+  if(editP)Object.assign(db.products.find(x=>x.id===editP),o);else db.products.push({id:uid(),...o});
+  persist();resetP();
+}
+function resetP(){editP=null;['nom','pre','cod','stk','cost'].forEach(k=>$('p-'+k).value='');
+  $('p-btn').textContent='Agregar producto';$('p-x').style.display='none';render()}
+function editProd(id){const p=db.products.find(x=>x.id===id);editP=id;
+  $('p-nom').value=p.nom;$('p-pre').value=p.pre;$('p-cod').value=p.cod;$('p-stk').value=p.stk;$('p-cost').value=p.cost??'';
+  $('p-btn').textContent='Guardar cambios';$('p-x').style.display='';scrollTo(0,0)}
+function delProd(id){ask('¿Eliminar este producto?',()=>{db.products=db.products.filter(x=>x.id!==id);cart=cart.filter(i=>i.id!==id);persist();render()})}
+
+function toggleEnt(id){const v=db.sales.find(x=>x.id===id);if(v){v.ent=!v.ent;persist();render()}}
+function delSale(id){ask('¿Borrar esta venta? El stock no se devuelve.',()=>{db.sales=db.sales.filter(x=>x.id!==id);persist();render()})}
+function delAll(){if(db.sales.length)ask('¿Borrar TODAS las ventas? No se puede deshacer.',()=>{db.sales=[];persist();render()})}
+let askCb=null;
+function ask(t,cb,ok,col){askCb=cb;$('ask-t').textContent=t;$('ask-ok').textContent=ok||'Borrar';$('ask-ok').style.background=col||'var(--dg)';$('ask').style.display='flex'}
+function pedirCobro(){if(!cart.length){flash('Primero añade algún producto');return}ask('¿Cobrar '+money(total())+'?',cobrar,'Sí, cobrar','var(--ok)')}
+function askOk(ok){$('ask').style.display='none';const f=askCb;askCb=null;if(ok&&f)f()}
+
+/* ---------- RENDER ---------- */
+function render(){
+  renderCaja();
+  $('c-list').innerHTML=db.clients.length?db.clients.map(c=>`<div class="item"><div><b>${esc(c.nom)}</b><small>${[c.tel,c.mail,c.dir].filter(Boolean).map(esc).join(' · ')}</small></div>
+    <div class="acts"><button onclick="editClient('${c.id}')">Editar</button><button class="d" onclick="delClient('${c.id}')">Borrar</button></div></div>`).join(''):'<div class="empty">Sin clientes</div>';
+  const qq=$('p-q').value.toLowerCase(),pl=db.products.filter(p=>(p.nom+p.cod).toLowerCase().includes(qq)).sort(byRef);
+  $('p-list').innerHTML=pl.length?pl.map(p=>`<div class="item"><div><b>${esc(p.nom)}</b><small>${[p.cod&&'Ref '+esc(p.cod),p.cost!==''&&p.cost!=null&&'Costo '+money(p.cost)+' · Beneficio '+money(p.pre-p.cost),hasStk(p)&&'Stock '+esc(p.stk)].filter(Boolean).join(' · ')}</small></div>
+    <div class="price">${money(p.pre)}</div>
+    <div class="acts"><button onclick="editProd('${p.id}')">Editar</button><button class="d" onclick="delProd('${p.id}')">Borrar</button></div></div>`).join(''):'<div class="empty">Sin productos</div>';
+  const hoy=new Date().toDateString(),sh=db.sales.filter(s=>new Date(s.fecha).toDateString()===hoy);
+  $('v-bent').textContent=money(db.sales.reduce((a,s)=>a+(s.ben||0),0));$('v-pend').textContent=db.sales.filter(x=>!x.ent).length;$('v-n').textContent=sh.length+' venta'+(sh.length===1?'':'s');
+  $('v-hoy').textContent=money(sh.reduce((a,s)=>a+s.total,0));$('v-ben').textContent=money(sh.reduce((a,s)=>a+(s.ben||0),0));
+  $('v-list').innerHTML=db.sales.length?db.sales.map(s=>`<div class="item"><div><b>${esc(s.cliente)}</b>${(()=>{const t=s.tel||(db.clients.find(c=>c.nom.toLowerCase()===s.cliente.toLowerCase())||{}).tel;return t?'<small>📞 '+esc(t)+'</small>':''})()}
+    <small>${new Date(s.fecha).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</small>
+    ${s.items.map(i=>{const c=i.cod||(db.products.find(p=>p.nom===i.nom)||{}).cod;return '<small>'+i.qty+'× '+(c?'Ref '+esc(c)+' · ':'')+esc(i.nom)+'</small>'}).join('')}${s.ben!=null?'<small>Beneficio: '+money(s.ben)+'</small>':''}<div><button class="ent ${s.ent?'ok':''}" onclick="toggleEnt('${s.id}')">${s.ent?'✅ Entregado':'⏳ Sin entregar'}</button></div></div><div class="price">${money(s.total)}</div><div class="acts"><button class="d" onclick="delSale('${s.id}')">Borrar</button></div></div>`).join(''):'<div class="empty">Todavía no hay ventas</div>';
+}
+
+/* ---------- CATÁLOGO CANARIAS 2026 ---------- */
+/* formato: ref;nombre;costo;pvp  |  S;refInicial;nombre base;medida:costo:pvp,... */
+const CAT={b1:`239;Molde Plum Cake;6;9
+240;Molde Cake - Tarta;6;9
+241;Molde 12 Cupcakes o Flanera;8;12
+242;Molde Desmontable de Dos Fondos;10;14
+243;Molde Redondo Desmontable con Tapa y Cierre;10.5;15
+244;Molde Rectangular con Tapa y Cierre;10.5;15
+245;Molde Rectangular Desmontable;7;10
+246;Tapete Horno Silicona;5;8
+247;Set de Dos Guantes Cocina;8;12
+248;Portaalimentos Rectangular;10;14
+249;Fuente de Aperitivos;10;14
+250;Set de Aperitivos;10;14
+251;Limpiabotellas Ajustable 30 - 40 cm.;5.5;7.5
+252;Escurridor Reversible Dos en Uno Gravity Slim;4.5;6.5
+253;Bandeja Organizadora para Fregadero;5;8
+254;Dispensador Organizador Jabón;10;14
+255;Dispensador Jabón;12;16
+256;Cesta Plegable;17;23
+257;Set de 16 Paños;10;14
+258;Set de 2 Paños de Cocina MasterChef;7;10
+259;Set de 6 Paños Semanario;14;19
+260;Set de 6 Paños Bordados Frutas;15;20
+261;Set de 6 Paños Alimentos;18;24
+262;Set de 3 Alfombras Multiusos Geométrico Digital;16;22
+263;Felpudo Welcome Home;7.5;11
+264;Comedero y Bebedero Minnie;9;12
+265;Manta Star Wars;5;7
+266;Comedero y Bebedero Star Wars;9;12
+267;Peluche con Pelota The Mandalorian;9;12
+268;Hervidor de Agua;17;24
+269;Cafetera vaso filtro 6 tazas;23;29
+270;Gofrera;17;24
+271;Tostadora 2 Ranuras;17;24
+272;Sandwichera 2 Sándwiches;17;24
+273;Grill Parrilla Doble;29.5;39.5
+274;Batidora Portátil Recargable;14;19
+275;Batidora 3 en 1;29.5;39.5
+276;Pizzera y Multigrill;37.5;49.5
+277;Cargador Inalámbrico 3 en 1;15;20
+278;Powerbank con 3 Cables integrados;20;25
+279;Lámpara Despertador con Carga Inalámbrica y Altavoz LED;22;29
+280;Altavoz Portátil Impermeable con Gancho y Luces LED;10;15
+281;Altavoz Bluetooth con Soporte para Móvil y Luces LED;17;25
+282;Altavoz Bluetooth con Efecto llama;20;29
+283;Micrófono Karaoke con Luces LED;18;25
+284;Auriculares Inalámbricos;22;30
+285;Auriculares de Diadema Estéreo Inalámbricos;17;25
+286;Gafas de Sol con Auriculares;21;29
+287;Ventilador Portátil sin Aspas USB;6;9
+288;Aro de Luz Selfie con Trípode;15;19
+289;Luz Nocturna con Sensor de Movimiento;8;12
+290;Lámpara Moderna con Luz LED;15;20
+291;Lámpara de Sobremesa;10;14
+292;Lámpara Unicornio LED Multicolor;8;12
+293;Lámpara Dinosaurio LED Multicolor;8;12
+294;Guirnalda LED Espacial;8;12
+295;Proyector Estrellas Astronautas;10;15
+296;Organizador de Respaldo de Asiento;9;14
+297;Organizador Multiusos;10;14
+298;Organizador Maletero;14;20
+299;Bolsa Multiusos con Dos Compartimentos;7;10
+300;Aspiradora de Coche;19;26
+301;Set de 9 Piezas de Limpieza Coche;15;20
+S;302;Juego de Sábanas Roma Beige;90:19:25,135 - 140:23:30,150:26:35
+S;305;Juego de Sábanas Alison Violet Ice;135 -140:23:30,150:26:35
+S;307;Juego de Sábanas Shiva Gris;90:19:25,135 - 140:23:30,150:26:35,180:30:40
+S;311;Juego de Sábanas Panda Marino;90:19:25,135 - 140:23:30,150:26:35
+314;Juego de Sábanas Maco Cama 90 cm.;19;25
+315;Juego de Sábanas Rex Cama 90 cm.;19;25
+S;316;Colcha Bouti Tulcán Blanco;90:23:31,135:30:41,150:32:45,180:35:50
+S;320;Colcha Bouti Zaruma;90:23:31,135:30:41,150:32:45
+S;323;Colcha Bouti Balti;135:30:41,150:31:45
+S;325;Colcha Bouti Taboca;135:30:41,150:32:45,180:35:50
+S;328;Juego de Sábanas Pirineo Otero Beige;90:16:23,135:19:27,150:21:30
+S;331;Juego de Sábanas Pirineo Pusol Azul;90:16:23,135:19:27,150:21:30,180:24:34
+S;335;Juego de Sábanas Pirineo Graus Malva;90:16:23,135:19:27,150:21:30
+338;Juego de Sábanas Pirineo Océano Cama 90 cm.;16;23
+339;Juego de Sábanas Pirineo Conejos Cama 90 cm.;16;23
+S;340;Juego de Sábanas Coralina Jerica Beige;90:22:31,135:25:35,150:28:40
+S;343;Juego de Sábanas Coralina Geldo Azul;90:22:31,135:25:35,150:28:40,180:32:45
+S;347;Bouti Naturina con Sedalina y Sherpa;90:42:53,135:54:69,150:57:73,180:61:79
+351;Manta Sedalina Geo Topo 130 x 160 cm.;11;16
+352;Manta Sedalina Geo Verde Agua 130 x 160 cm.;11;16
+353;Manta Sedalina Geo Antracita 130 x 160 cm.;11;16
+354;Manta Natural Circón Crudo 160 x 220 cm.;24;33
+355;Manta Natural Circón Gris 160 x 220 cm.;24;33
+356;Manta Natural Circón Rosa 160 x 220 cm.;24;33
+357;Manta Natural Circón Crudo 220 x 240 cm.;33;45
+358;Colcha Foulard Multiusos Azul;17;23
+359;Colcha Foulard Multiusos Gris Perla;17;23
+S;360;Protector de Colchón;90:10:15,135:14:20,150:15:22,180:17:25
+364;Almohada Viscolástica de Copos;15;20`,b2:`1;Sabores de Navidad;13.5;19
+2;Lata Premium Mantecado Crocanti con Avellana;9.5;13
+3;Lata Premium Mantecado de Pistacho;10.5;14
+4;Lata Premium Mantecado de Galleta Caramelizada;9.5;13
+5;Lata Premium Mantecado de Galleta de Cacao;9.5;13
+6;Lata Premium Mantecado de Mantequilla;9.5;13
+7;Lata Premium Polvorón de Almendra;9.5;13
+8;Polvorón Ralladura de Limón;5;7
+9;Polvorón Bombón Chocolate y Almendra;6.5;9
+10;Delicia de Gofio y Almendra;8;11
+11;Roscos de Vino;7.5;10.5
+12;Surtido Navideño sin Azúcar;11;14
+13;Lata Gourmet con Surtido de Turrones;11;14
+14;Carrusel Mágico de Navidad;11;15
+15;Almendras Rellenas de Turrón;9.5;13
+16;Lingote Oro Galleta Caramelizada;8;11
+17;Lingote Rosa Tarta de Queso;8;11
+18;Bombonera Rocas Chocolate Gold con Galleta Caramelizada;11;14
+19;Lata Rocas Artesanas de Almendra;11;14
+20;Baúl Árbol de la Vida con Surtido de Bombones;12;16
+21;Baúl Mariposas con Surtido de Bombones;12;16
+22;Lata Doble Altura con Crocanti de Avellana y Coco;11;15
+23;Surtido de Chocolates;10.5;14
+24;Trío de Barritas;9;12
+25;Lata con Barquillos Bañados en Pistacho y Turrón de Jijona;11.5;15
+26;Lata de Abanicos;13;17
+27;Barquillos Artesanos;14;18
+28;Buzón Británico con Surtido de Pastas;11;14
+29;Proyector Musical con Hojaldres Doble Cacao;15;19
+30;Cañas de Chocolate;10;13
+31;Cañas de Crema Pastelera;10;13
+32;Cañas de Cabello de Ángel;10;13
+33;Lazos de Hojaldre Blancos;9;12
+34;Lazos de Hojaldre Cebra;9;12
+35;Calcetines Papá Noel Tallas 35 - 42;5;8
+36;Calcetines Papá Noel Tallas 42 - 47;5;8
+37;Calcetines Navidad Tallas 35 - 42;5;8
+38;Calcetines Navidad Tallas 42 - 47;5;8
+39;Bandeja Vaciabolsillos Papá Noel;6;9
+40;Decoración para Puerta o Pared de Navidad;9;14
+41;Árbol Navideño;15;20
+42;Bola Navideña;12;16
+43;Polo Norte;7;10
+44;Papá Noel;16;22
+45;Saco Papá Noel;6;9
+46;Bandeja Papá Noel;6;9
+47;Colgante para Puerta con Llave Papá Noel;5;7
+48;Manta Papá Noel;10.5;15
+49;Peluche Oso Navidad con Manta;16;23
+50;Cojín Peluche Galleta de Jengibre;10.5;15
+51;Manta Sweet Christmas;10.5;15
+52;Casa Galleta de Jengibre;16;22
+53;Soldado Cascanueces;20;26
+54;Tarro Soldado Cascanueces;16;22
+55;Manta Soldado Cascanueces;10.5;15
+56;Muñeco de Nieve;15;21
+57;Elfo Repite Todo;16;22
+58;Oso Cascanueces;15;20
+59;Taza Reyes Magos;5;7
+60;Set de 3 Vasos Reyes Magos;14;19
+61;Set de 6 Platos Reyes Magos;2;3
+62;Set de 6 Vasos Reyes Magos;2;3
+63;Servilletas Reyes Magos;2;3
+64;Portal de Belén Magnético;7;10
+65;Bolsa Reyes Magos;3;5
+66;Saco Reyes Magos;6;9
+67;Bandeja Reyes Magos;6;9
+68;Colgador para Puerta con Llave Reyes Magos;5;7
+69;Manta Reyes Magos;10.5;15
+70;Felpudo Antideslizante Reyes Magos;10;15
+71;Globo Foil Base Pie Reyes Magos;9;12
+72;Manta Navidad;10;15
+73;Felpudo Feliz Navidad;10;15
+74;Decoración Reno;10;14
+75;Guirnalda LED Galleta de Jengibre;7;10
+76;Guirnalda LED Árbol de Navidad;7;10
+77;Set de 3 Gnomos;10;14
+78;Aldea Navideña Mágica;16;22
+79;Escena de Navidad Invernadero;15;20
+80;Escena de Navidad Iglesia;15;20
+81;Proyector Navideño;16;22
+82;Tren Navideño;16;22
+83;Tren Navideño con Vagones;16;22
+84;Fragancia Flor de Pascua;7;10
+85;Fragancia Dulce de Navidad;7;10
+86;Delantal Papá Noel;11;15
+87;Set de Café 6 Tazas y Platos Flor de Pascua;14;20
+88;Set de 2 Tazas Árbol de Navidad;9;12
+89;Mug con Asa Forma de Árbol de Navidad;9;12
+90;Set de 6 Cucharas y Tenedores Navidad;10;14
+91;Set de Cuchara y Tenedor Navideño;7;10
+92;Bandeja Árbol de Navidad;10;14
+93;Plato y Paleta Navidad;13;19
+94;Set de 6 Platos de Navidad;2;3
+95;Set de 6 Vasos de Navidad;2;3
+96;Servilletas Árbol de Navidad;2;3
+97;Set de 3 Paños Bordados Navidad;8.5;12
+98;Set de 2 Paños Pandoro;6;9
+99;Mantel Navideño Rudolph 140 x 180 cm.;16;21
+100;Mantel Navideño Rudolph 140 x 240 cm.;19;25
+101;Globo Foil Corona Dorada;2;3
+102;Diadema Reno;2;3
+103;Bolsa de Cotillón Premium;2;3
+104;Pendientes Árboles Festivos;5.5;8
+105;Set de 2 Collares Papá Noel y Reno;6;9
+106;Set de 2 Pulseras Papá Noel y Árbol;6;9
+107;Colgante Espiral Canaria;10;14
+108;Pulsera Brilla Siempre;8.5;12
+109;Pulseras de Piedras de Protección;10;14
+110;Colgante Corazón Mamá;24;29
+111;Colgante Infinity;24;29
+112;Pendientes Infinity;16;20
+113;Colgante Cruz;24;29
+114;Pendientes Cruz;24;29
+115;Colgante Kanat;21;26
+116;Pendientes Aro Kanat;16;20
+117;Colgante Árbol de la Vida;26;32
+118;Pendientes Árbol de la Vida;26;32
+119;Pulsera Roja Acero Ojo Turco;8;12
+120;Pulsera Malva con Perlas Cultivadas Trébol;8;12
+121;Pulsera No Dejes de Soñar;10;14
+122;Pulsera Sé que Me Cuidas desde el Cielo;10;14
+123;Colgante Árbol de la Vida Chakras con Piedras Naturales;10;15
+124;Joyero Árbol;13;18
+C;125;5;7.5;Ambientador Mikado;Lavanda,Ropa Limpia,Canela Naranja
+C;128;7;9.5;Esencia Hidrosoluble Brumaroma;Relax,Vitality,Ropa Limpia
+131;Difusor ultrasónico de aromas para aromaterapia;13;18
+132;Alcohol de Romero;4;6
+C;133;5.5;8;Aceite Corporal;de Rosa Mosqueta,de Ricino
+135;Almohadilla Eléctrica;24;33
+136;Manta Eléctrica;27;37
+137;Masajeador Facial Piedra Jade 2 Rodillos;7.5;11
+138;Eliminador de Callos;12;17
+139;Set de Manicura y Pedicura 5 en 1;10;14
+140;Lámpara de Secado Rápido de Uñas;18;25
+141;Afeitadora Rotativa Recargable;19;27
+142;Recortadora Grooming 5 en 1 Recargable;26;37
+143;Depiladora Recargable Mujer;15;20
+144;Rizador de Pelo;16;22
+145;Plancha de Pelo;16;22
+146;Air Styler 4 en 1;31;42
+147;Cepillo de Dientes Eléctrico;15;20
+148;Masajeador Facial;10;14
+149;Espejo de Maquillaje LED;14;19
+150;Estuche de Belleza con Espejo y Luz LED;14;19
+151;Organizador Cosméticos Giratorio;17;23
+152;Armario Organizador Cosméticos;17;24
+153;Quitapelusas Recargable;11;15
+C;154;14;19;Set de Dos Toallas Lavabo y Ducha;Crudo,Mostaza,Lavanda,Verde Kaki,Azul Celeste,Azul Índigo,Gris Perla,Negro
+C;162;6.5;10;Alfombra de Baño;Azul,Topo,Gris
+165;Cortina de Baño Easy;11;16
+166;Alfombra de Baño Easy;9;14
+167;Set de Baño Easy;10;15
+168;Escobillero Easy;10;15
+169;Set de 3 Cestas;8;12
+170;Set de 3 Cestas Bambú;14;20
+171;Cortador de alimentos multifuncional;14;20
+172;Picador Rápido;18;23
+173;Mandolina Corte V;22;28
+174;Cortador Papas 2 Hojas;12;17
+175;Rallador Contenedor Trío Box;10;14
+176;Bol MasterChef 1,2 L;4;6
+177;Bol Masterchef 3 L;7;10.5
+178;Set de 5 Cuchillos y Pelador;17;24
+179;Set de 3 Cuchillos Peladores;5;8
+180;Set de 3 Espátulas de Untar;5;8
+181;Set de 3 Cuchillos con Funda;6;9
+182;Cuchillo para Verduras MasterChef;4;6
+183;Cuchillo Pelador MasterChef;4;6
+184;Tijera Cocina Profesional con Descapsulador;5;8
+185;Afilador de Cuchillos y Tijeras;14;19
+186;Sartén Aluminio Forjado Nativa 20 cm;14;18
+187;Sartén Aluminio Forjado Nativa 24 cm;16.5;22
+188;Sartén Aluminio Forjado Nativa 26 cm;18.5;25
+189;Wok Aluminio Forjado Nativa 28 cm;22;30
+190;Cacerola Alta Aluminio Forjado con Tapa Nativa 24 cm;30;39
+191;Cacerola Baja Aluminio Forjado con Tapa Nativa 28 cm;32;42
+192;Cazo Aluminio Forjado con Tapa Nativa 16 cm;20;26
+193;Freidora con Cestillo;23;30
+194;Sartén de Tortillas;25;33
+195;Crepera 4 Cavidades;18;23
+196;Sartén Mono;7;10
+197;Sartén Oso;7;10
+198;Sartén Corazón;7;10
+199;Cafetera Italiana 4 Tazas Inducción;13;18
+200;Cafetera Italiana 6 Tazas Inducción;15;21
+201;Base para Cafetera y Depósito de Cápsulas;17;24
+202;Set de 6 Tazas Café Espresso;8;11
+203;Set de Café 6 Tazas y Platos Verde Agua;15;20
+204;Set de 6 Tazas Cookie;10;14
+205;Batidor de Leche;8;11
+206;Set de Café 2 Tazas y Platos Corazón Amor;6;8.5
+207;Set de 2 Mugs Love;12;16
+208;Set de 2 Mugs Equipo Amor;12;15
+209;Delantal Amor;10;14
+210;Set de 3 Fiambreras Rectangulares Herméticas de Cristal;14;20
+211;Fiambrera 2 Compartimentos;7;10
+212;Set de 3 Fiambreras Redondas con Tapa;4;7
+213;Set de 5 Fiambreras Redondas;16;22
+214;Set de 5 Bols con Tapa;8;11
+215;Set de 3 Fiambreras con Tapa;13;17
+216;Set de 3 Bols con Tapa;11;15
+217;Set de 8 Fiambreras con Válvula;16;22
+218;Set de 3 Tarros Herméticos;13;17
+219;Set de 3 Botes Enroscables;9;12
+220;Botella Mariposas;13;18
+221;Termo Negro con Indicador de Temperatura;10;14
+222;Termo Azul con Indicador de Temperatura;10;14
+223;Vaso con Cuchara y Tapa;5.5;8
+224;Fiambrera Eléctrica;13;18
+225;Portabocadillos Unicornio;6;8
+226;Botella Unicornio;7;10
+227;Portabocadillos Dino;6;8
+228;Botella Dino;7;10
+229;Set de 3 Fiambreras;4;7
+230;Set de 7 Piezas de Cocina;17;24
+231;Set de 4 Tablas de Cortar Flexibles;6.5;9
+232;Set de 6 Tapas Flexibles;5;7
+233;Tapa Gira Tortillas;5;7
+234;Set de Dos Bandejas Rectangulares;11;15
+235;Set de Dos Bandejas;10;14
+236;Molde Redondo Freidora de Aire;7;10
+237;Molde Rectangular Freidora de Aire;6;9
+238;Set 5 Accesorios Freidora de Aire;18;25`};
+function expandCat(t){const o=[];t.trim().split('\n').forEach(l=>{const f=l.split(';');
+  if(f[0]==='S'){let r=+f[1];f[3].split(',').forEach(z=>{const[m,c,p]=z.split(':');o.push([r++,f[2]+' Cama '+m+' cm.',+c,+p])})}
+  else if(f[0]==='C'){let r=+f[1];f[5].split(',').forEach(n=>o.push([r++,f[4]+' '+n,+f[2],+f[3]]))}
+  else o.push([+f[0],f[1],+f[2],+f[3]])});return o}
+db.cats=db.cats||[];
+if(!db.cats.includes('v2')){const old={};
+  db.products=db.products.filter(p=>{if(p.cost!==''&&p.cost!=null&&/^\d+$/.test(String(p.cod))&&+p.cod<=364){old[p.cod]=p.stk;return false}return true});
+  db.cats=['v2'];db.stkOld=old}
+const stkOld=db.stkOld||{};
+for(const k in CAT){if(!db.cats.includes(k)){const have=new Set(db.products.map(p=>String(p.cod)));
+  expandCat(CAT[k]).forEach(([r,n,c,p])=>{if(!have.has(String(r)))db.products.push({id:uid(),nom:n,pre:p,cod:String(r),stk:stkOld[String(r)]||'',cost:c})});
+  db.cats.push(k);persist()}}
+/* ---------- CLIENTES DEL EXCEL ---------- */
+const CLI=[["ACORAIDA PRIMA","636146861",""],["AHINOA POLIGEL","637309116",""],["AHINOA RAMIREZ","633171340",""],["AHINOA ALEXIA","665265992",""],["ALBA","663858943",""],["AMANDA","626866404",""],["ANA","649046934",""],["ANA ALEXIA","676573921",""],["ANA MUÑOZ","647052664",""],["ANDREA VECINA","629523758",""],["ANGARA","693349295",""],["ANGELA","646402659",""],["ARANCHA PESCADERIA","667082679",""],["ARANZAZU ONINZA","699664787",""],["AUSI TIA ONINZA","649391222",""],["BEA","660441016",""],["CANDE","627316422",""],["CARLA ISA","630617848",""],["CARMEN ROSA COMPAÑERA MORU","636859476",""],["CARMEN ROSA TIA MORU","661058918",""],["CATY GABI","616672441",""],["CONCHI YOHANA","636141609",""],["CYNTHIA","682886653",""],["CYNTIA MORU","662549747",""],["DALIA","638552063",""],["DAVINIA COLE","679117305",""],["DESI (MORU)","627232381",""],["DUNIA","646293034",""],["ELE","661407349",""],["FATIMA INSULAR","695730647",""],["FATIMA MEDICO","626479307",""],["GABRIEL","660346806",""],["GEMA","645065943",""],["GLORIA TIA","616415734",""],["GORETY","697649109",""],["GRIMANESA","689531559",""],["GUILLE TIA GILIAN","699273507",""],["HANELORE","666522708",""],["IDAIRA HERMANA GILIAN","692859677",""],["IRAYA","600031537",""],["ISABEL LITA","657356482",""],["ISIS","630815162",""],["JAQUELINE","696459255",""],["JUDITH MEDICO","658491919",""],["JUDITH SARA MELLIZA","658491919",""],["KARI AMIGA CANDE","647892804",""],["KARINA","655144309",""],["KELY (MORU)","696549505",""],["KIOBA","622658186",""],["LAURA EVE","667847763",""],["LAURA KIA","639004060",""],["LIDIA TIA MORU","647408996",""],["LITA","630384806",""],["LOLI ALBA","615880809",""],["LOLI COSTURA","629132249",""],["LORENA ACO","696668482",""],["LUPE (TERESA)","646665007",""],["MACU ROSI","645640010",""],["MANOLINA","678706047",""],["MARI CARMEN JOANA","649220297",""],["MARI HERMANA KARINA","629891362",""],["MARI JOSE","646458818",""],["MARIA ANGARA","662570603",""],["MARIA DEL MAR","650031360",""],["MARIA NISA","699077056",""],["MARIA TIA ALEXIA","625420618",""],["MARICARME TARA TOUR","669862533",""],["MARIJUANITA","722202556",""],["MARINA","630746868",""],["MARTA","666617025",""],["MARTA MORU","608370133",""],["MERCEDES","664332671",""],["MIRIAM MORU","649235021",""],["MIRIAN (GRIMA)","637830499",""],["MONICA","686565270",""],["MORWENNA (MORU)","620583381",""],["NAYARI","670391649",""],["NICO","647561073",""],["NIRA","654835929",""],["NISA","679254553",""],["NURIA GRIMA","619080505",""],["ONINZA","625823966",""],["PALOMA","674535995",""],["PATRICIA MELLIZO","622105716",""],["PIBI","627902899",""],["PINO","606093026",""],["RAQUEL MORU","637761229",""],["REBECA","636050501",""],["ROSI","676230335",""],["SARA MADRE DE PAULA","626988382",""],["SARA MELENARA","670275995",""],["SARA MELLIZA","683132973",""],["SARA RUNNER","691342331",""],["SARAI","658233204",""],["SONIA","661658649",""],["SORAYA","656962166",""],["SUSANA","699563573",""],["TANIA TIA ALEXIA","639932119",""],["TERESA (LUPE)","606403260",""],["THAIS","601199590",""],["VANESA","695907324",""],["YAIZA Y TERE","696477359",""],["YAQUELIN","696459255",""],["YESENIA GILIAN","606812042",""],["YLENIA","690863996",""],["YOHANA","610058401",""],["YULISA","609363928",""],["YURIBE HERMANA SORAYA","617102054",""],["ZAIRE","697504717",""],["ZINIA","626623402",""]];
+if(!db.cats.includes('cli1')){const ya=new Set(db.clients.map(c=>c.nom.trim().toLowerCase()));
+  CLI.forEach(([n,t,d])=>{if(!ya.has(n.toLowerCase()))db.clients.push({id:uid(),nom:n,tel:t,mail:'',dir:d})});
+  db.cats.push('cli1');persist()}
+render();
+</script>
+</body>
+</html>
+
+</body></html>
